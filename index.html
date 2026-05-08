@@ -240,7 +240,7 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 .btn-add svg { width: 16px; height: 16px; }
 
 .filters-bar {
-  display: grid; grid-template-columns: 1.5fr repeat(4, 1fr);
+  display: grid; grid-template-columns: 1.5fr repeat(3, 1fr);
   gap: 10px; margin-bottom: 1.5rem;
   background: var(--surface); border-radius: var(--radius-lg);
   padding: 1rem 1.25rem; box-shadow: var(--shadow);
@@ -261,7 +261,7 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 .search-wrap input { padding-left: 32px; }
 
 .quick-filters {
-  grid-column: span 5;
+  grid-column: span 4;
   display: flex;
   gap: 8px;
   margin-top: 5px;
@@ -290,16 +290,35 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
   overflow: hidden;
 }
 .table-head {
-  display: grid; grid-template-columns: 1.8fr 1.2fr 1.5fr 1.1fr 1.2fr 1fr 80px;
-  gap: 8px; padding: .75rem 1.5rem;
-  background: var(--paper); border-bottom: 1px solid var(--paper-3);
-  font-size: 10px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .8px;
+  display: grid;
+  grid-template-columns: 1.8fr 1.2fr 1.5fr 1.1fr 1.2fr 1fr 80px;
+  gap: 8px;
+  padding: .75rem 1.5rem;
+  background: var(--paper);
+  border-bottom: 1px solid var(--paper-3);
+  font-size: 10px;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: .8px;
 }
+.sortable-header {
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.sortable-header:hover { color: var(--accent); }
+.sort-icon { font-size: 8px; opacity: 0.6; }
+
 .table-row {
-  display: grid; grid-template-columns: 1.8fr 1.2fr 1.5fr 1.1fr 1.2fr 1fr 80px;
-  gap: 8px; padding: 1rem 1.5rem;
+  display: grid;
+  grid-template-columns: 1.8fr 1.2fr 1.5fr 1.1fr 1.2fr 1fr 80px;
+  gap: 8px;
+  padding: 1rem 1.5rem;
   border-bottom: 1px solid var(--paper-2);
-  align-items: center; transition: background .12s;
+  align-items: center;
+  transition: background .12s;
   animation: fadeRow .3s ease both;
   position: relative;
 }
@@ -344,6 +363,39 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 }
 .empty-title { font-family: 'Instrument Serif', serif; font-size: 22px; color: var(--ink-2); margin-bottom: 6px; }
 .loading { text-align: center; padding: 3rem; color: var(--ink-3); font-size: 13px; }
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 1rem;
+  background: var(--surface);
+  border-top: 1px solid var(--paper-2);
+}
+.pagination button {
+  background: var(--paper);
+  border: 1px solid var(--paper-3);
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: var(--ink-2);
+  transition: all .15s;
+}
+.pagination button:hover:not(:disabled) {
+  background: var(--accent-light);
+  border-color: var(--accent);
+}
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.page-info {
+  font-size: 12px;
+  color: var(--ink-2);
+}
 
 .modal-backdrop {
   display: none; position: fixed; inset: 0;
@@ -413,16 +465,8 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
   .table-head, .table-row { grid-template-columns: 2fr 1fr 1.2fr 1fr 80px; }
   .table-head span:nth-child(4), .table-row > *:nth-child(4),
   .table-head span:nth-child(5), .table-row > *:nth-child(5) { display: none; }
-  .theme-toggle-mobile {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .page-header {
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
+  .theme-toggle-mobile { display: inline-flex; align-items: center; justify-content: center; }
+  .page-header { align-items: center; gap: 10px; flex-wrap: wrap; }
 }
 </style>
 </head>
@@ -512,15 +556,6 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
           <option value="ok">✅ In ordine</option>
         </select>
       </div>
-      <div class="filter-group">
-        <label>Ordina per</label>
-        <select id="f-sort" onchange="render()">
-          <option value="date-asc">Data (prossima)</option>
-          <option value="date-desc">Data (lontana)</option>
-          <option value="az">Azienda A-Z</option>
-          <option value="cert">Certificazione</option>
-        </select>
-      </div>
       <div class="quick-filters">
         <button class="quick-filter" onclick="quickFilter('today')">📅 Oggi</button>
         <button class="quick-filter" onclick="quickFilter('week')">📆 Questa settimana</button>
@@ -530,15 +565,20 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 
     <div class="table-card">
       <div class="table-head">
-        <span>Azienda</span>
-        <span>Soggetto</span>
-        <span>Certificazione</span>
-        <span>Tipo</span>
-        <span>Scadenza</span>
+        <span class="sortable-header" onclick="sortBy('name')">Azienda <span class="sort-icon" id="sort-name">↕️</span></span>
+        <span class="sortable-header" onclick="sortBy('soggetto')">Soggetto <span class="sort-icon" id="sort-soggetto">↕️</span></span>
+        <span class="sortable-header" onclick="sortBy('cert')">Certificazione <span class="sort-icon" id="sort-cert">↕️</span></span>
+        <span class="sortable-header" onclick="sortBy('tipo')">Tipo <span class="sort-icon" id="sort-tipo">↕️</span></span>
+        <span class="sortable-header" onclick="sortBy('date')">Scadenza <span class="sort-icon" id="sort-date">↕️</span></span>
         <span>Stato</span>
         <span></span>
       </div>
       <div id="table-body"><div class="loading">⏳ Caricamento scadenze...</div></div>
+      <div class="pagination" id="pagination-controls" style="display: none;">
+        <button id="prev-page" disabled>← Precedente</button>
+        <span class="page-info" id="page-info">Pagina 1 di 1</span>
+        <button id="next-page" disabled>Successiva →</button>
+      </div>
     </div>
   </main>
 </div>
@@ -598,8 +638,16 @@ let db, items = [], editingId = null;
 let currentQuickFilter = 'all';
 let today = new Date(); today.setHours(0,0,0,0);
 
+// Nuove variabili per ordinamento e paginazione
+let sortField = 'date';
+let sortDirection = 'asc';   // 'asc' o 'desc'
+let currentPage = 1;
+let itemsPerPage = 20;
+
 const ADMIN_PASSWORD = 'scadenze2024';
 let isAdmin = localStorage.getItem('isAdmin') === 'true';
+
+// ==================== FUNZIONI ESISTENTI (mantenute) ====================
 
 function toggleAdmin() {
   if (isAdmin) {
@@ -633,18 +681,8 @@ function updateAdminUI() {
 }
 
 function statusLabel(st) {
-  const icons = {
-    scaduta: '❌',
-    urgente: '⚠️',
-    'in-scadenza': '⏰',
-    ok: '✅'
-  };
-  const texts = {
-    scaduta: 'Scaduta',
-    urgente: 'Urgente',
-    'in-scadenza': 'In scadenza',
-    ok: 'Ok'
-  };
+  const icons = { scaduta: '❌', urgente: '⚠️', 'in-scadenza': '⏰', ok: '✅' };
+  const texts = { scaduta: 'Scaduta', urgente: 'Urgente', 'in-scadenza': 'In scadenza', ok: 'Ok' };
   return `${icons[st]} ${texts[st]}`;
 }
 
@@ -653,98 +691,6 @@ function updateLastSync() {
   const timeStr = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
   const syncElement = document.getElementById('last-sync');
   if (syncElement) syncElement.textContent = `Ultimo aggiornamento: ${timeStr}`;
-}
-
-function quickFilter(type) {
-  currentQuickFilter = type;
-  const oggi = new Date(); oggi.setHours(0,0,0,0);
-  
-  if (type === 'today') {
-    const oggiStr = oggi.toISOString().split('T')[0];
-    document.getElementById('f-search').value = '';
-    document.getElementById('f-stato').value = '';
-    document.getElementById('f-tipo').value = '';
-    document.getElementById('f-cert').value = '';
-    const filtered = items.filter(i => i.date === oggiStr);
-    renderFiltered(filtered);
-    showToast(`📅 Mostrando scadenze di oggi (${filtered.length})`);
-  } else if (type === 'week') {
-    const tra7 = new Date(oggi); tra7.setDate(oggi.getDate() + 7);
-    const filtered = items.filter(i => {
-      const itemDate = new Date(i.date);
-      return itemDate >= oggi && itemDate <= tra7;
-    });
-    document.getElementById('f-search').value = '';
-    document.getElementById('f-stato').value = '';
-    document.getElementById('f-tipo').value = '';
-    document.getElementById('f-cert').value = '';
-    renderFiltered(filtered);
-    showToast(`📆 Mostrando scadenze dei prossimi 7 giorni (${filtered.length})`);
-  } else {
-    document.getElementById('f-search').value = '';
-    document.getElementById('f-stato').value = '';
-    document.getElementById('f-tipo').value = '';
-    document.getElementById('f-cert').value = '';
-    render();
-    showToast(`🗑️ Mostrando tutte le scadenze (${items.length})`);
-  }
-}
-
-function renderFiltered(filteredItems) {
-  const body = document.getElementById('table-body');
-  if (!filteredItems.length) {
-    body.innerHTML = `<div class="empty"><div class="empty-title">Nessuna scadenza</div>Nessuna scadenza nel periodo selezionato.</div>`;
-    return;
-  }
-  body.innerHTML = filteredItems.map((i, idx) => {
-    const st = getStatus(i.date);
-    return `<div class="table-row st-${st}" style="animation-delay:${idx*30}ms" data-id="${i.id}">
-      <div>
-        <div class="row-name">${esc(i.name)}</div>
-        ${i.resp ? `<div class="row-sub">${esc(i.resp)}</div>` : ''}
-      </div>
-      <div class="row-muted">${esc(i.soggetto || '—')}</div>
-      <div class="row-muted">${esc(i.cert)}</div>
-      <div class="row-muted">${esc(i.tipo)}</div>
-      <div>
-        <div class="row-date">${formatDate(i.date)}</div>
-        <div class="row-date-sub">${daysLabel(i.date)}</div>
-      </div>
-      <div><span class="badge ${st}">${statusLabel(st)}</span></div>
-      ${isAdmin ? `
-      <div class="row-actions">
-        <button class="icon-btn" onclick="editItem('${i.id}')" title="Modifica scadenza">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        </button>
-        <button class="icon-btn del" onclick="deleteItem('${i.id}')" title="Elimina scadenza">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-        </button>
-      </div>
-      ` : ''}
-    </div>`;
-  }).join('');
-}
-
-async function init() {
-  db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  await loadItems();
-  updateAdminUI();
-  const savedTheme = localStorage.getItem('theme') || 'light';
-  applyTheme(savedTheme);
-}
-
-async function loadItems() {
-  const { data, error } = await db.from('scadenze').select('*').order('date', { ascending: true });
-  if (error) { showToast('Errore caricamento'); return; }
-  items = data || [];
-  items = items.map(i => ({ ...i, soggetto: i.soggetto || '' }));
-  updateSelects();
-  if (currentQuickFilter !== 'all') {
-    quickFilter(currentQuickFilter);
-  } else {
-    render();
-  }
-  updateLastSync();
 }
 
 function getStatus(d) {
@@ -788,72 +734,6 @@ function updateSelects() {
   fT.value = curT; fC.value = curC;
   document.getElementById('list-tipi').innerHTML = tipi.map(t=>`<option value="${esc(t)}">`).join('');
   document.getElementById('list-certs').innerHTML = certs.map(c=>`<option value="${esc(c)}">`).join('');
-}
-
-function render() {
-  currentQuickFilter = 'all';
-  const search = (document.getElementById('f-search').value||'').toLowerCase();
-  const fT = document.getElementById('f-tipo').value;
-  const fC = document.getElementById('f-cert').value;
-  const fS = document.getElementById('f-stato').value;
-  const sort = document.getElementById('f-sort').value;
-
-  let filtered = items.filter(i => {
-    const st = getStatus(i.date);
-    if (search && ![i.name,i.cert,i.tipo,i.resp,i.soggetto].join(' ').toLowerCase().includes(search)) return false;
-    if (fT && i.tipo !== fT) return false;
-    if (fC && i.cert !== fC) return false;
-    if (fS && st !== fS) return false;
-    return true;
-  });
-
-  filtered.sort((a,b) => {
-    if (sort==='date-asc') return new Date(a.date)-new Date(b.date);
-    if (sort==='date-desc') return new Date(b.date)-new Date(a.date);
-    if (sort==='az') return (a.name||'').localeCompare(b.name||'');
-    if (sort==='cert') return (a.cert||'').localeCompare(b.cert||'');
-    return 0;
-  });
-
-  document.getElementById('s-tot').textContent = items.length;
-  document.getElementById('s-exp').textContent = items.filter(i=>getStatus(i.date)==='scaduta').length;
-  document.getElementById('s-urg').textContent = items.filter(i=>getStatus(i.date)==='urgente').length;
-  document.getElementById('s-ins').textContent = items.filter(i=>getStatus(i.date)==='in-scadenza').length;
-  document.getElementById('s-ok').textContent = items.filter(i=>getStatus(i.date)==='ok').length;
-
-  const body = document.getElementById('table-body');
-  if (!filtered.length) {
-    body.innerHTML = `<div class="empty"><div class="empty-title">${items.length ? 'Nessun risultato' : 'Nessuna scadenza'}</div>${items.length ? 'Prova a modificare i filtri.' : 'Aggiungi la prima scadenza con il pulsante in alto.'}</div>`;
-    return;
-  }
-
-  body.innerHTML = filtered.map((i, idx) => {
-    const st = getStatus(i.date);
-    return `<div class="table-row st-${st}" style="animation-delay:${idx*30}ms" data-id="${i.id}">
-      <div>
-        <div class="row-name">${esc(i.name)}</div>
-        ${i.resp ? `<div class="row-sub">${esc(i.resp)}</div>` : ''}
-      </div>
-      <div class="row-muted">${esc(i.soggetto || '—')}</div>
-      <div class="row-muted">${esc(i.cert)}</div>
-      <div class="row-muted">${esc(i.tipo)}</div>
-      <div>
-        <div class="row-date">${formatDate(i.date)}</div>
-        <div class="row-date-sub">${daysLabel(i.date)}</div>
-      </div>
-      <div><span class="badge ${st}">${statusLabel(st)}</span></div>
-      ${isAdmin ? `
-      <div class="row-actions">
-        <button class="icon-btn" onclick="editItem('${i.id}')" title="Modifica scadenza">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        </button>
-        <button class="icon-btn del" onclick="deleteItem('${i.id}')" title="Elimina scadenza">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-        </button>
-      </div>
-      ` : ''}
-    </div>`;
-  }).join('');
 }
 
 function openModal(id=null) {
@@ -928,6 +808,200 @@ function toggleTheme() {
   const newTheme = current === 'dark' ? 'light' : 'dark';
   localStorage.setItem('theme', newTheme);
   applyTheme(newTheme);
+}
+
+// ==================== NUOVE FUNZIONI PER ORDINAMENTO E PAGINAZIONE ====================
+
+function sortBy(field) {
+  if (sortField === field) {
+    // Inverti direzione
+    sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortField = field;
+    sortDirection = 'asc';
+  }
+  currentPage = 1;  // torna alla prima pagina
+  render();
+  updateSortIcons();
+}
+
+function updateSortIcons() {
+  const fields = ['name', 'soggetto', 'cert', 'tipo', 'date'];
+  fields.forEach(f => {
+    const iconSpan = document.getElementById(`sort-${f}`);
+    if (iconSpan) {
+      if (sortField === f) {
+        iconSpan.textContent = sortDirection === 'asc' ? '↑' : '↓';
+      } else {
+        iconSpan.textContent = '↕️';
+      }
+    }
+  });
+}
+
+function getFilteredItems() {
+  const search = (document.getElementById('f-search').value || '').toLowerCase();
+  const fT = document.getElementById('f-tipo').value;
+  const fC = document.getElementById('f-cert').value;
+  const fS = document.getElementById('f-stato').value;
+
+  let filtered = items.filter(i => {
+    const st = getStatus(i.date);
+    if (search && ![i.name, i.cert, i.tipo, i.resp, i.soggetto].join(' ').toLowerCase().includes(search)) return false;
+    if (fT && i.tipo !== fT) return false;
+    if (fC && i.cert !== fC) return false;
+    if (fS && st !== fS) return false;
+    return true;
+  });
+
+  // Applica quickFilter (today/week)
+  const oggi = new Date(); oggi.setHours(0,0,0,0);
+  if (currentQuickFilter === 'today') {
+    const oggiStr = oggi.toISOString().split('T')[0];
+    filtered = filtered.filter(i => i.date === oggiStr);
+  } else if (currentQuickFilter === 'week') {
+    const tra7 = new Date(oggi); tra7.setDate(oggi.getDate() + 7);
+    filtered = filtered.filter(i => {
+      const itemDate = new Date(i.date);
+      return itemDate >= oggi && itemDate <= tra7;
+    });
+  }
+
+  return filtered;
+}
+
+// Ordinamento generico per campo
+function compareItems(a, b) {
+  let valA, valB;
+  switch (sortField) {
+    case 'name': valA = a.name || ''; valB = b.name || ''; break;
+    case 'soggetto': valA = a.soggetto || ''; valB = b.soggetto || ''; break;
+    case 'cert': valA = a.cert || ''; valB = b.cert || ''; break;
+    case 'tipo': valA = a.tipo || ''; valB = b.tipo || ''; break;
+    case 'date': valA = new Date(a.date); valB = new Date(b.date); break;
+    default: valA = a.name || ''; valB = b.name || '';
+  }
+  if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
+  if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
+  return 0;
+}
+
+function render() {
+  // Aggiorna i contatori della sidebar
+  document.getElementById('s-tot').textContent = items.length;
+  document.getElementById('s-exp').textContent = items.filter(i=>getStatus(i.date)==='scaduta').length;
+  document.getElementById('s-urg').textContent = items.filter(i=>getStatus(i.date)==='urgente').length;
+  document.getElementById('s-ins').textContent = items.filter(i=>getStatus(i.date)==='in-scadenza').length;
+  document.getElementById('s-ok').textContent = items.filter(i=>getStatus(i.date)==='ok').length;
+
+  let filtered = getFilteredItems();
+  const totalFiltered = filtered.length;
+  const totalPages = Math.ceil(totalFiltered / itemsPerPage);
+
+  // Assicura che currentPage sia valido
+  if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+  if (currentPage < 1) currentPage = 1;
+
+  // Ordina
+  filtered.sort(compareItems);
+
+  // Paginazione
+  const start = (currentPage - 1) * itemsPerPage;
+  const paginated = filtered.slice(start, start + itemsPerPage);
+
+  // Render tabella
+  const body = document.getElementById('table-body');
+  if (!paginated.length) {
+    body.innerHTML = `<div class="empty"><div class="empty-title">${totalFiltered ? 'Nessun risultato' : 'Nessuna scadenza'}</div>${totalFiltered ? 'Prova a modificare i filtri.' : 'Aggiungi la prima scadenza con il pulsante in alto.'}</div>`;
+  } else {
+    body.innerHTML = paginated.map((i, idx) => {
+      const st = getStatus(i.date);
+      return `<div class="table-row st-${st}" style="animation-delay:${idx*15}ms" data-id="${i.id}" ondblclick="editItem('${i.id}')">
+        <div>
+          <div class="row-name">${esc(i.name)}</div>
+          ${i.resp ? `<div class="row-sub">${esc(i.resp)}</div>` : ''}
+        </div>
+        <div class="row-muted">${esc(i.soggetto || '—')}</div>
+        <div class="row-muted">${esc(i.cert)}</div>
+        <div class="row-muted">${esc(i.tipo)}</div>
+        <div>
+          <div class="row-date">${formatDate(i.date)}</div>
+          <div class="row-date-sub">${daysLabel(i.date)}</div>
+        </div>
+        <div><span class="badge ${st}">${statusLabel(st)}</span></div>
+        ${isAdmin ? `
+        <div class="row-actions">
+          <button class="icon-btn" onclick="editItem('${i.id}')" title="Modifica scadenza">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button class="icon-btn del" onclick="deleteItem('${i.id}')" title="Elimina scadenza">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+          </button>
+        </div>
+        ` : ''}
+      </div>`;
+    }).join('');
+  }
+
+  // Gestione controlli paginazione
+  const paginationDiv = document.getElementById('pagination-controls');
+  const prevBtn = document.getElementById('prev-page');
+  const nextBtn = document.getElementById('next-page');
+  const pageInfo = document.getElementById('page-info');
+
+  if (totalFiltered <= itemsPerPage) {
+    paginationDiv.style.display = 'none';
+  } else {
+    paginationDiv.style.display = 'flex';
+    pageInfo.textContent = `Pagina ${currentPage} di ${totalPages}`;
+    prevBtn.disabled = currentPage === 1;
+    nextBtn.disabled = currentPage === totalPages;
+    // Scollega eventi vecchi e ricollega
+    const newPrev = prevBtn.cloneNode(true);
+    const newNext = nextBtn.cloneNode(true);
+    prevBtn.parentNode.replaceChild(newPrev, prevBtn);
+    nextBtn.parentNode.replaceChild(newNext, nextBtn);
+    newPrev.onclick = () => { if (currentPage > 1) { currentPage--; render(); } };
+    newNext.onclick = () => { if (currentPage < totalPages) { currentPage++; render(); } };
+  }
+
+  updateSortIcons();
+  updateLastSync(); // aggiorna timestamp ogni render
+}
+
+function quickFilter(type) {
+  currentQuickFilter = type;
+  // Resetta i filtri UI (search, stato, tipo, cert) per coerenza
+  document.getElementById('f-search').value = '';
+  document.getElementById('f-stato').value = '';
+  document.getElementById('f-tipo').value = '';
+  document.getElementById('f-cert').value = '';
+  currentPage = 1;
+  render();
+  const count = getFilteredItems().length;
+  if (type === 'today') showToast(`📅 Mostrando scadenze di oggi (${count})`);
+  else if (type === 'week') showToast(`📆 Mostrando scadenze dei prossimi 7 giorni (${count})`);
+  else showToast(`🗑️ Mostrando tutte le scadenze (${count})`);
+}
+
+async function init() {
+  db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  await loadItems();
+  updateAdminUI();
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  applyTheme(savedTheme);
+  updateSortIcons();
+}
+
+async function loadItems() {
+  const { data, error } = await db.from('scadenze').select('*').order('date', { ascending: true });
+  if (error) { showToast('Errore caricamento'); return; }
+  items = data || [];
+  items = items.map(i => ({ ...i, soggetto: i.soggetto || '' }));
+  updateSelects();
+  currentPage = 1;
+  render();
+  updateLastSync();
 }
 
 document.addEventListener('keydown', e => { if (e.key==='Escape') closeModal(); });
