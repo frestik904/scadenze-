@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Scadenze</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -307,12 +307,17 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 .table-card {
   background: var(--surface); border-radius: var(--radius-lg);
   box-shadow: var(--shadow); border: 1px solid var(--paper-3);
-  overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
-.table-head {
+.table-head, .table-row {
   display: grid;
   grid-template-columns: 1.8fr 1.2fr 1.5fr 1.1fr 1.2fr 1fr 100px;
   gap: 8px;
+  align-items: center;
+  min-width: 750px;
+}
+.table-head {
   padding: .75rem 1.5rem;
   background: var(--paper);
   border-bottom: 1px solid var(--paper-3);
@@ -332,12 +337,8 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 .sort-icon { font-size: 8px; opacity: 0.6; }
 
 .table-row {
-  display: grid;
-  grid-template-columns: 1.8fr 1.2fr 1.5fr 1.1fr 1.2fr 1fr 100px;
-  gap: 8px;
   padding: 1rem 1.5rem;
   border-bottom: 1px solid var(--paper-2);
-  align-items: center;
   transition: background .12s;
   animation: fadeRow .3s ease both;
   position: relative;
@@ -479,17 +480,97 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 @keyframes fadeRow { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 @keyframes modalIn { from { opacity: 0; transform: scale(.96) translateY(8px); } to { opacity: 1; transform: none; } }
 
+/* ========== RESPONSIVE MOBILE ========== */
 @media (max-width: 900px) {
   .layout { grid-template-columns: 1fr; }
   .sidebar { display: none; }
-  .main { padding: 1.5rem; }
-  .filters-bar { grid-template-columns: 1fr 1fr; }
-  .quick-filters { grid-column: span 2; }
-  .table-head, .table-row { grid-template-columns: 2fr 1fr 1.2fr 1fr 80px; }
-  .table-head span:nth-child(4), .table-row > *:nth-child(4),
-  .table-head span:nth-child(5), .table-row > *:nth-child(5) { display: none; }
-  .theme-toggle-mobile { display: inline-flex; align-items: center; justify-content: center; }
-  .page-header { align-items: center; gap: 10px; flex-wrap: wrap; }
+  .main { padding: 1rem; }
+
+  .filters-bar {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .quick-filters {
+    grid-column: span 1;
+    flex-wrap: wrap;
+    justify-content: stretch;
+  }
+  .quick-filter {
+    flex: 1;
+    text-align: center;
+    padding: 8px 6px;
+    font-size: 13px;
+  }
+  .filter-checkbox {
+    justify-content: center;
+    border: none;
+    background: none;
+    padding: 8px 0;
+  }
+
+  /* Allineamento perfetto su mobile */
+  .table-head, .table-row {
+    min-width: 750px;
+    grid-template-columns: 1.8fr 1.2fr 1.5fr 1.1fr 1.2fr 1fr 100px;
+    gap: 8px;
+    align-items: center;
+  }
+  .table-head {
+    padding: 0.75rem 1rem;
+  }
+  .table-row {
+    padding: 0.75rem 1rem;
+  }
+  .row-name { font-size: 13px; }
+  .badge { font-size: 10px; padding: 2px 8px; }
+
+  .row-actions {
+    gap: 12px;
+  }
+  .icon-btn {
+    width: 40px;
+    height: 40px;
+  }
+  .icon-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .pagination button {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+  .page-info {
+    font-size: 13px;
+  }
+
+  .modal {
+    max-width: calc(100% - 2rem);
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .modal-footer {
+    flex-direction: row;
+    justify-content: center;
+  }
+  .btn-cancel, .btn-save {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .main { padding: 0.75rem; }
+  .page-title { font-size: 28px; }
+  .filter-group label { font-size: 9px; }
+  .filter-group input, .filter-group select { font-size: 12px; padding: 8px 8px; }
+  .search-wrap input { padding-left: 32px; }
+  .table-head, .table-row { min-width: 650px; } /* leggermente più compatta per schermi molto piccoli */
+  .icon-btn { width: 36px; height: 36px; }
+  .toast { font-size: 12px; white-space: normal; text-align: center; width: 90%; }
 }
 </style>
 </head>
@@ -580,7 +661,7 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
           <option value="scaduta">❌ Scadute</option>
           <option value="urgente">⚠️ Urgenti</option>
           <option value="in-scadenza">⏰ In scadenza</option>
-          <option value="ok">✅ In ordine</option>
+          <option value="ok">🟢 Tranquille</option>
         </select>
       </div>
       <label class="filter-checkbox">
@@ -671,13 +752,11 @@ let sortField = 'date';
 let sortDirection = 'asc';
 let currentPage = 1;
 let itemsPerPage = 20;
-let isViewOnly = false;       // true se URL contiene ?viewonly=1
-let showCompleted = false;    // checkbox "Mostra completate"
+let isViewOnly = false;
 
 const ADMIN_PASSWORD = 'scadenze2024';
 let isAdmin = localStorage.getItem('isAdmin') === 'true';
 
-// ==================== UTILITY ====================
 function getUrlParam(param) {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get(param);
@@ -689,9 +768,8 @@ function statusLabel(st) {
   return `${icons[st]} ${texts[st]}`;
 }
 
-// ==================== ADMIN ====================
 function toggleAdmin() {
-  if (isViewOnly) return;  // viewonly non può diventare admin
+  if (isViewOnly) return;
   if (isAdmin) {
     isAdmin = false;
     localStorage.removeItem('isAdmin');
@@ -720,12 +798,10 @@ function updateAdminUI() {
     btn.classList.remove('active');
     btn.innerHTML = '<span>🔒</span> Admin';
   }
-  // bottone aggiungi visibile solo se admin e non viewonly
   const addBtn = document.getElementById('btn-add');
   if (addBtn) addBtn.style.display = (isAdmin && !isViewOnly) ? 'inline-flex' : 'none';
 }
 
-// ==================== COMPLETATO ====================
 async function toggleCompleted(id) {
   if (isViewOnly || !isAdmin) return;
   const item = items.find(i => i.id === id);
@@ -737,7 +813,6 @@ async function toggleCompleted(id) {
   await loadItems();
 }
 
-// ==================== STATISTICHE (solo non completate, escluse dalla sidebar principale) ====================
 function updateStats() {
   const activeItems = items.filter(i => !i.completed);
   const total = activeItems.length;
@@ -762,7 +837,6 @@ function toggleShowCompleted() {
   }
 }
 
-// ==================== GET STATUS (ignora completati, ma usato per badge) ====================
 function getStatus(d) {
   const diff = Math.floor((new Date(d) - today) / 86400000);
   if (diff < 0) return 'scaduta';
@@ -788,7 +862,6 @@ function esc(s) {
   return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ==================== FILTRI E ORDINAMENTO ====================
 function getFilteredItems() {
   const search = (document.getElementById('f-search').value || '').toLowerCase();
   const fT = document.getElementById('f-tipo').value;
@@ -797,11 +870,8 @@ function getFilteredItems() {
   const showCompletedOnly = document.getElementById('show-completed')?.checked || false;
 
   let filtered = items.filter(i => {
-    // Se showCompletedOnly è vero, mostriamo SOLO i completati.
-    // Altrimenti mostriamo SOLO i non completati.
     if (showCompletedOnly && !i.completed) return false;
     if (!showCompletedOnly && i.completed) return false;
-
     const st = getStatus(i.date);
     if (search && ![i.name, i.cert, i.tipo, i.resp, i.soggetto].join(' ').toLowerCase().includes(search)) return false;
     if (fT && i.tipo !== fT) return false;
@@ -810,18 +880,16 @@ function getFilteredItems() {
     return true;
   });
 
-  // quick filter (today/week) – invariato
   const oggi = new Date(); oggi.setHours(0,0,0,0);
   if (currentQuickFilter === 'today') {
-    const oggiStr = oggi.toISOString().split('T')[0];
+    const oggiStr = oggi.toISOString().slice(0,10);
     filtered = filtered.filter(i => i.date === oggiStr);
   } else if (currentQuickFilter === 'week') {
-  const oggiStr = new Date().toISOString().slice(0,10);
-  const tra7Date = new Date();
-  tra7Date.setDate(tra7Date.getDate() + 7);
-  const tra7Str = tra7Date.toISOString().slice(0,10);
-  filtered = filtered.filter(i => i.date >= oggiStr && i.date <= tra7Str);
-}
+    const oggiStr = oggi.toISOString().slice(0,10);
+    const tra7Date = new Date(); tra7Date.setDate(tra7Date.getDate() + 7);
+    const tra7Str = tra7Date.toISOString().slice(0,10);
+    filtered = filtered.filter(i => i.date >= oggiStr && i.date <= tra7Str);
+  }
   return filtered;
 }
 
@@ -886,7 +954,6 @@ function filterByStatus(status) {
   render();
 }
 
-// ==================== RENDER (tabella e paginazione) ====================
 function render() {
   updateStats();
   let filtered = getFilteredItems();
@@ -956,7 +1023,6 @@ function render() {
   updateLastSync();
 }
 
-// ==================== CRUD ====================
 async function loadItems() {
   const { data, error } = await db.from('scadenze').select('*').order('date', { ascending: true });
   if (error) { showToast('Errore caricamento'); return; }
@@ -1003,18 +1069,15 @@ async function saveItem() {
   const cert = document.getElementById('m-cert').value.trim();
   const date = document.getElementById('m-date').value;
   if (!name||!tipo||!cert||!date) { showToast('Compila tutti i campi obbligatori'); return; }
-
   const payload = { name, tipo, cert, date,
     soggetto: soggetto,
     resp: document.getElementById('m-resp').value.trim(),
     note: document.getElementById('m-note').value.trim(),
-    completed: false   // nuovo record parte come non completato
+    completed: false
   };
-
   const { error } = editingId
     ? await db.from('scadenze').update(payload).eq('id', editingId)
     : await db.from('scadenze').insert(payload);
-
   if (error) { showToast('Errore durante il salvataggio'); return; }
   showToast(editingId ? 'Scadenza aggiornata ✓' : 'Scadenza aggiunta ✓');
   closeModal();
@@ -1048,7 +1111,6 @@ function updateLastSync() {
   if (syncElement) syncElement.textContent = `Ultimo aggiornamento: ${timeStr}`;
 }
 
-// ==================== TEMA ====================
 function applyTheme(theme) {
   if (theme === 'dark') {
     document.documentElement.setAttribute('data-theme', 'dark');
@@ -1068,14 +1130,12 @@ function toggleTheme() {
   applyTheme(newTheme);
 }
 
-// ==================== INIT ====================
 async function init() {
   const viewOnlyParam = getUrlParam('viewonly');
   isViewOnly = (viewOnlyParam === '1');
   db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   await loadItems();
   if (!isViewOnly) {
-    // solo se non viewonly l'admin può essere attivato, altrimenti disabilitiamo
     const savedAdmin = localStorage.getItem('isAdmin');
     isAdmin = savedAdmin === 'true';
   } else {
@@ -1085,12 +1145,9 @@ async function init() {
   const savedTheme = localStorage.getItem('theme') || 'light';
   applyTheme(savedTheme);
   updateSortIcons();
-
-  // se viewonly, nascondi anche l'admin lock (opzionale) e disabilita eventuali interazioni
   if (isViewOnly) {
     const adminBtn = document.getElementById('adminLockBtn');
     if (adminBtn) adminBtn.style.display = 'none';
-    // disabilita doppio click tramite CSS? già gestito nell'ondblclick
   }
 }
 
