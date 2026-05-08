@@ -816,12 +816,12 @@ function getFilteredItems() {
     const oggiStr = oggi.toISOString().split('T')[0];
     filtered = filtered.filter(i => i.date === oggiStr);
   } else if (currentQuickFilter === 'week') {
-    const tra7 = new Date(oggi); tra7.setDate(oggi.getDate() + 7);
-    filtered = filtered.filter(i => {
-      const itemDate = new Date(i.date);
-      return itemDate >= oggi && itemDate <= tra7;
-    });
-  }
+  const oggiStr = new Date().toISOString().slice(0,10);
+  const tra7Date = new Date();
+  tra7Date.setDate(tra7Date.getDate() + 7);
+  const tra7Str = tra7Date.toISOString().slice(0,10);
+  filtered = filtered.filter(i => i.date >= oggiStr && i.date <= tra7Str);
+}
   return filtered;
 }
 
