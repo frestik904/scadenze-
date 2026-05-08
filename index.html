@@ -305,22 +305,20 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 }
 
 .table-card {
+  background: var(--surface); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow); border: 1px solid var(--paper-3);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  width: 100%;
 }
-
 .table-head, .table-row {
   display: grid;
   grid-template-columns: 1.8fr 1.2fr 1.5fr 1.1fr 1.2fr 1fr 100px;
   gap: 8px;
   align-items: center;
-  width: max-content;   /* larghezza adattata al contenuto */
-  min-width: 100%;      /* garantisce che occupi almeno tutto lo spazio visibile */
-  padding-right: 16px;  /* piccolo margine dopo l'ultima colonna (opzionale) */
+  min-width: 750px;
 }
 .table-head {
-  padding: .75rem 1.5rem .75rem 1.5rem;
+  padding: .75rem 1.5rem;
   background: var(--paper);
   border-bottom: 1px solid var(--paper-3);
   font-size: 10px;
@@ -339,7 +337,7 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 .sort-icon { font-size: 8px; opacity: 0.6; }
 
 .table-row {
-  padding: 1rem 1.5rem 1rem 1.5rem;
+  padding: 1rem 1.5rem;
   border-bottom: 1px solid var(--paper-2);
   transition: background .12s;
   animation: fadeRow .3s ease both;
