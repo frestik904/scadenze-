@@ -794,11 +794,14 @@ function getFilteredItems() {
   const fT = document.getElementById('f-tipo').value;
   const fC = document.getElementById('f-cert').value;
   const fS = document.getElementById('f-stato').value;
-  const showCompletedCheck = document.getElementById('show-completed')?.checked || false;
+  const showCompletedOnly = document.getElementById('show-completed')?.checked || false;
 
   let filtered = items.filter(i => {
-    // Filtro completate: se showCompletedCheck è false, escludi i completati
-    if (!showCompletedCheck && i.completed) return false;
+    // Se showCompletedOnly è vero, mostriamo SOLO i completati.
+    // Altrimenti mostriamo SOLO i non completati.
+    if (showCompletedOnly && !i.completed) return false;
+    if (!showCompletedOnly && i.completed) return false;
+
     const st = getStatus(i.date);
     if (search && ![i.name, i.cert, i.tipo, i.resp, i.soggetto].join(' ').toLowerCase().includes(search)) return false;
     if (fT && i.tipo !== fT) return false;
@@ -807,7 +810,7 @@ function getFilteredItems() {
     return true;
   });
 
-  // quick filter (today/week)
+  // quick filter (today/week) – invariato
   const oggi = new Date(); oggi.setHours(0,0,0,0);
   if (currentQuickFilter === 'today') {
     const oggiStr = oggi.toISOString().split('T')[0];
