@@ -152,6 +152,7 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 .sidebar-stat-val.amber { color: #FFD740; }
 .sidebar-stat-val.blue { color: #82B1FF; }
 .sidebar-stat-val.green { color: #69F0AE; }
+.sidebar-stat-val.completed { color: #AAA; }
 .sidebar-divider { border: none; border-top: 1px solid var(--sidebar-divider); margin: 1.5rem 0; }
 .sidebar-footer { margin-top: auto; font-size: 11px; color: var(--sidebar-label); }
 
@@ -240,11 +241,12 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 .btn-add svg { width: 16px; height: 16px; }
 
 .filters-bar {
-  display: grid; grid-template-columns: 1.5fr repeat(3, 1fr);
+  display: grid; grid-template-columns: 1.5fr repeat(3, 1fr) auto;
   gap: 10px; margin-bottom: 1.5rem;
   background: var(--surface); border-radius: var(--radius-lg);
   padding: 1rem 1.25rem; box-shadow: var(--shadow);
   border: 1px solid var(--paper-3);
+  align-items: end;
 }
 .filter-group label { display: block; font-size: 10px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 5px; }
 .filter-group input,
@@ -259,9 +261,27 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 .search-wrap { position: relative; }
 .search-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--ink-3); pointer-events: none; }
 .search-wrap input { padding-left: 32px; }
+.filter-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--paper);
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--paper-3);
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.filter-checkbox input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+}
 
 .quick-filters {
-  grid-column: span 4;
+  grid-column: span 5;
   display: flex;
   gap: 8px;
   margin-top: 5px;
@@ -291,7 +311,7 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 }
 .table-head {
   display: grid;
-  grid-template-columns: 1.8fr 1.2fr 1.5fr 1.1fr 1.2fr 1fr 80px;
+  grid-template-columns: 1.8fr 1.2fr 1.5fr 1.1fr 1.2fr 1fr 100px;
   gap: 8px;
   padding: .75rem 1.5rem;
   background: var(--paper);
@@ -313,7 +333,7 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 
 .table-row {
   display: grid;
-  grid-template-columns: 1.8fr 1.2fr 1.5fr 1.1fr 1.2fr 1fr 80px;
+  grid-template-columns: 1.8fr 1.2fr 1.5fr 1.1fr 1.2fr 1fr 100px;
   gap: 8px;
   padding: 1rem 1.5rem;
   border-bottom: 1px solid var(--paper-2);
@@ -332,6 +352,7 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 .table-row.st-urgente::before { background: #E6A817; }
 .table-row.st-in-scadenza::before { background: var(--blue); }
 .table-row.st-ok::before { background: var(--green); }
+.table-row.completed-row { opacity: 0.7; background: var(--paper-2); }
 .table-row:last-child { border-bottom: none; }
 .table-row:hover { background: var(--paper); }
 .row-name { font-weight: 500; font-size: 14px; }
@@ -347,6 +368,7 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 }
 .icon-btn:hover { border-color: var(--ink-3); color: var(--ink); background: var(--paper); }
 .icon-btn.del:hover { border-color: var(--red); color: var(--red); background: var(--red-light); }
+.icon-btn.complete:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
 
 .badge {
   display: inline-flex; align-items: center; gap: 6px;
@@ -356,6 +378,7 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 .badge.urgente { background: var(--amber-light); color: var(--amber); }
 .badge.in-scadenza { background: var(--blue-light); color: var(--blue); }
 .badge.ok { background: var(--green-light); color: var(--green); }
+.badge.completed { background: var(--paper-3); color: var(--ink-3); }
 
 .empty {
   text-align: center; padding: 5rem 1rem;
@@ -479,7 +502,7 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 
     <div class="sidebar-section">Panoramica</div>
     <div class="sidebar-stat" onclick="filterByStatus('')">
-      <span class="sidebar-stat-label">Totali</span>
+      <span class="sidebar-stat-label">Totali (attive)</span>
       <span class="sidebar-stat-val" id="s-tot">—</span>
     </div>
     <div class="sidebar-stat" onclick="filterByStatus('scaduta')">
@@ -497,6 +520,10 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
     <div class="sidebar-stat" onclick="filterByStatus('ok')">
       <span class="sidebar-stat-label">In ordine</span>
       <span class="sidebar-stat-val green" id="s-ok">—</span>
+    </div>
+    <div class="sidebar-stat" onclick="toggleShowCompleted()">
+      <span class="sidebar-stat-label">Completate</span>
+      <span class="sidebar-stat-val completed" id="s-completed">—</span>
     </div>
 
     <hr class="sidebar-divider">
@@ -521,7 +548,7 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
       <div>
         <h1 class="page-title">Le tue <em>scadenze</em></h1>
       </div>
-      <button class="btn-add" onclick="openModal()">
+      <button class="btn-add" id="btn-add" onclick="openModal()" style="display: none;">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
         Aggiungi scadenza
       </button>
@@ -556,6 +583,9 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
           <option value="ok">✅ In ordine</option>
         </select>
       </div>
+      <label class="filter-checkbox">
+        <input type="checkbox" id="show-completed" onchange="render()"> Mostra completate
+      </label>
       <div class="quick-filters">
         <button class="quick-filter" onclick="quickFilter('today')">📅 Oggi</button>
         <button class="quick-filter" onclick="quickFilter('week')">📆 Questa settimana</button>
@@ -637,19 +667,31 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 let db, items = [], editingId = null;
 let currentQuickFilter = 'all';
 let today = new Date(); today.setHours(0,0,0,0);
-
-// Nuove variabili per ordinamento e paginazione
 let sortField = 'date';
-let sortDirection = 'asc';   // 'asc' o 'desc'
+let sortDirection = 'asc';
 let currentPage = 1;
 let itemsPerPage = 20;
+let isViewOnly = false;       // true se URL contiene ?viewonly=1
+let showCompleted = false;    // checkbox "Mostra completate"
 
 const ADMIN_PASSWORD = 'scadenze2024';
 let isAdmin = localStorage.getItem('isAdmin') === 'true';
 
-// ==================== FUNZIONI ESISTENTI (mantenute) ====================
+// ==================== UTILITY ====================
+function getUrlParam(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param);
+}
 
+function statusLabel(st) {
+  const icons = { scaduta: '❌', urgente: '⚠️', 'in-scadenza': '⏰', ok: '✅' };
+  const texts = { scaduta: 'Scaduta', urgente: 'Urgente', 'in-scadenza': 'In scadenza', ok: 'Ok' };
+  return `${icons[st]} ${texts[st]}`;
+}
+
+// ==================== ADMIN ====================
 function toggleAdmin() {
+  if (isViewOnly) return;  // viewonly non può diventare admin
   if (isAdmin) {
     isAdmin = false;
     localStorage.removeItem('isAdmin');
@@ -671,28 +713,56 @@ function toggleAdmin() {
 
 function updateAdminUI() {
   const btn = document.getElementById('adminLockBtn');
-  if (isAdmin) {
+  if (isAdmin && !isViewOnly) {
     btn.classList.add('active');
     btn.innerHTML = '<span>🔓</span> Admin';
   } else {
     btn.classList.remove('active');
     btn.innerHTML = '<span>🔒</span> Admin';
   }
+  // bottone aggiungi visibile solo se admin e non viewonly
+  const addBtn = document.getElementById('btn-add');
+  if (addBtn) addBtn.style.display = (isAdmin && !isViewOnly) ? 'inline-flex' : 'none';
 }
 
-function statusLabel(st) {
-  const icons = { scaduta: '❌', urgente: '⚠️', 'in-scadenza': '⏰', ok: '✅' };
-  const texts = { scaduta: 'Scaduta', urgente: 'Urgente', 'in-scadenza': 'In scadenza', ok: 'Ok' };
-  return `${icons[st]} ${texts[st]}`;
+// ==================== COMPLETATO ====================
+async function toggleCompleted(id) {
+  if (isViewOnly || !isAdmin) return;
+  const item = items.find(i => i.id === id);
+  if (!item) return;
+  const newCompleted = !item.completed;
+  const { error } = await db.from('scadenze').update({ completed: newCompleted }).eq('id', id);
+  if (error) { showToast('Errore aggiornamento'); return; }
+  showToast(newCompleted ? '✅ Scadenza segnata come completata' : '🔄 Scadenza ripristinata');
+  await loadItems();
 }
 
-function updateLastSync() {
-  const now = new Date();
-  const timeStr = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-  const syncElement = document.getElementById('last-sync');
-  if (syncElement) syncElement.textContent = `Ultimo aggiornamento: ${timeStr}`;
+// ==================== STATISTICHE (solo non completate, escluse dalla sidebar principale) ====================
+function updateStats() {
+  const activeItems = items.filter(i => !i.completed);
+  const total = activeItems.length;
+  const scadute = activeItems.filter(i => getStatus(i.date) === 'scaduta').length;
+  const urgenti = activeItems.filter(i => getStatus(i.date) === 'urgente').length;
+  const inScadenza = activeItems.filter(i => getStatus(i.date) === 'in-scadenza').length;
+  const ok = activeItems.filter(i => getStatus(i.date) === 'ok').length;
+  const completedCount = items.filter(i => i.completed).length;
+  document.getElementById('s-tot').textContent = total;
+  document.getElementById('s-exp').textContent = scadute;
+  document.getElementById('s-urg').textContent = urgenti;
+  document.getElementById('s-ins').textContent = inScadenza;
+  document.getElementById('s-ok').textContent = ok;
+  document.getElementById('s-completed').textContent = completedCount;
 }
 
+function toggleShowCompleted() {
+  const cb = document.getElementById('show-completed');
+  if (cb) {
+    cb.checked = !cb.checked;
+    render();
+  }
+}
+
+// ==================== GET STATUS (ignora completati, ma usato per badge) ====================
 function getStatus(d) {
   const diff = Math.floor((new Date(d) - today) / 86400000);
   if (diff < 0) return 'scaduta';
@@ -718,15 +788,187 @@ function esc(s) {
   return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function filterByStatus(s) {
+// ==================== FILTRI E ORDINAMENTO ====================
+function getFilteredItems() {
+  const search = (document.getElementById('f-search').value || '').toLowerCase();
+  const fT = document.getElementById('f-tipo').value;
+  const fC = document.getElementById('f-cert').value;
+  const fS = document.getElementById('f-stato').value;
+  const showCompletedCheck = document.getElementById('show-completed')?.checked || false;
+
+  let filtered = items.filter(i => {
+    // Filtro completate: se showCompletedCheck è false, escludi i completati
+    if (!showCompletedCheck && i.completed) return false;
+    const st = getStatus(i.date);
+    if (search && ![i.name, i.cert, i.tipo, i.resp, i.soggetto].join(' ').toLowerCase().includes(search)) return false;
+    if (fT && i.tipo !== fT) return false;
+    if (fC && i.cert !== fC) return false;
+    if (fS && st !== fS) return false;
+    return true;
+  });
+
+  // quick filter (today/week)
+  const oggi = new Date(); oggi.setHours(0,0,0,0);
+  if (currentQuickFilter === 'today') {
+    const oggiStr = oggi.toISOString().split('T')[0];
+    filtered = filtered.filter(i => i.date === oggiStr);
+  } else if (currentQuickFilter === 'week') {
+    const tra7 = new Date(oggi); tra7.setDate(oggi.getDate() + 7);
+    filtered = filtered.filter(i => {
+      const itemDate = new Date(i.date);
+      return itemDate >= oggi && itemDate <= tra7;
+    });
+  }
+  return filtered;
+}
+
+function sortBy(field) {
+  if (sortField === field) {
+    sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortField = field;
+    sortDirection = 'asc';
+  }
+  currentPage = 1;
+  render();
+  updateSortIcons();
+}
+
+function compareItems(a, b) {
+  let valA, valB;
+  switch (sortField) {
+    case 'name': valA = a.name || ''; valB = b.name || ''; break;
+    case 'soggetto': valA = a.soggetto || ''; valB = b.soggetto || ''; break;
+    case 'cert': valA = a.cert || ''; valB = b.cert || ''; break;
+    case 'tipo': valA = a.tipo || ''; valB = b.tipo || ''; break;
+    case 'date': valA = new Date(a.date); valB = new Date(b.date); break;
+    default: valA = a.name || ''; valB = b.name || '';
+  }
+  if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
+  if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
+  return 0;
+}
+
+function updateSortIcons() {
+  const fields = ['name', 'soggetto', 'cert', 'tipo', 'date'];
+  fields.forEach(f => {
+    const iconSpan = document.getElementById(`sort-${f}`);
+    if (iconSpan) {
+      if (sortField === f) {
+        iconSpan.textContent = sortDirection === 'asc' ? '↑' : '↓';
+      } else {
+        iconSpan.textContent = '↕️';
+      }
+    }
+  });
+}
+
+function quickFilter(type) {
+  currentQuickFilter = type;
+  document.getElementById('f-search').value = '';
+  document.getElementById('f-stato').value = '';
+  document.getElementById('f-tipo').value = '';
+  document.getElementById('f-cert').value = '';
+  currentPage = 1;
+  render();
+  const count = getFilteredItems().length;
+  if (type === 'today') showToast(`📅 Mostrando scadenze di oggi (${count})`);
+  else if (type === 'week') showToast(`📆 Mostrando scadenze dei prossimi 7 giorni (${count})`);
+  else showToast(`🗑️ Mostrando tutte le scadenze (${count})`);
+}
+
+function filterByStatus(status) {
   currentQuickFilter = 'all';
-  document.getElementById('f-stato').value = s;
+  document.getElementById('f-stato').value = status;
   render();
 }
 
+// ==================== RENDER (tabella e paginazione) ====================
+function render() {
+  updateStats();
+  let filtered = getFilteredItems();
+  const totalFiltered = filtered.length;
+  const totalPages = Math.ceil(totalFiltered / itemsPerPage);
+  if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+  if (currentPage < 1) currentPage = 1;
+  filtered.sort(compareItems);
+  const start = (currentPage - 1) * itemsPerPage;
+  const paginated = filtered.slice(start, start + itemsPerPage);
+
+  const body = document.getElementById('table-body');
+  if (!paginated.length) {
+    body.innerHTML = `<div class="empty"><div class="empty-title">${totalFiltered ? 'Nessun risultato' : 'Nessuna scadenza attiva'}</div>${totalFiltered ? 'Prova a modificare i filtri.' : 'Aggiungi una nuova scadenza con il pulsante in alto.'}</div>`;
+  } else {
+    body.innerHTML = paginated.map((i, idx) => {
+      const st = i.completed ? 'completed' : getStatus(i.date);
+      const statusBadge = i.completed ? '✅ Completata' : statusLabel(st);
+      const rowClass = i.completed ? 'table-row completed-row' : `table-row st-${st}`;
+      return `<div class="${rowClass}" style="animation-delay:${idx*15}ms" data-id="${i.id}" ondblclick="${(!isViewOnly && isAdmin && !i.completed) ? `editItem('${i.id}')` : ''}">
+        <div>
+          <div class="row-name">${esc(i.name)}</div>
+          ${i.resp ? `<div class="row-sub">${esc(i.resp)}</div>` : ''}
+        </div>
+        <div class="row-muted">${esc(i.soggetto || '—')}</div>
+        <div class="row-muted">${esc(i.cert)}</div>
+        <div class="row-muted">${esc(i.tipo)}</div>
+        <div>
+          <div class="row-date">${formatDate(i.date)}</div>
+          <div class="row-date-sub">${daysLabel(i.date)}</div>
+        </div>
+        <div><span class="badge ${i.completed ? 'completed' : st}">${statusBadge}</span></div>
+        <div class="row-actions">
+          ${(!isViewOnly && isAdmin) ? `
+            ${!i.completed ? `<button class="icon-btn complete" onclick="toggleCompleted('${i.id}')" title="Segna come completata">✅</button>` : `<button class="icon-btn complete" onclick="toggleCompleted('${i.id}')" title="Ripristina (non completata)">🔄</button>`}
+            <button class="icon-btn" onclick="editItem('${i.id}')" title="Modifica scadenza">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button class="icon-btn del" onclick="deleteItem('${i.id}')" title="Elimina scadenza">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            </button>
+          ` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  const paginationDiv = document.getElementById('pagination-controls');
+  const prevBtn = document.getElementById('prev-page');
+  const nextBtn = document.getElementById('next-page');
+  const pageInfo = document.getElementById('page-info');
+  if (totalFiltered <= itemsPerPage) {
+    paginationDiv.style.display = 'none';
+  } else {
+    paginationDiv.style.display = 'flex';
+    pageInfo.textContent = `Pagina ${currentPage} di ${totalPages}`;
+    prevBtn.disabled = currentPage === 1;
+    nextBtn.disabled = currentPage === totalPages;
+    const newPrev = prevBtn.cloneNode(true);
+    const newNext = nextBtn.cloneNode(true);
+    prevBtn.parentNode.replaceChild(newPrev, prevBtn);
+    nextBtn.parentNode.replaceChild(newNext, nextBtn);
+    newPrev.onclick = () => { if (currentPage > 1) { currentPage--; render(); } };
+    newNext.onclick = () => { if (currentPage < totalPages) { currentPage++; render(); } };
+  }
+  updateSortIcons();
+  updateLastSync();
+}
+
+// ==================== CRUD ====================
+async function loadItems() {
+  const { data, error } = await db.from('scadenze').select('*').order('date', { ascending: true });
+  if (error) { showToast('Errore caricamento'); return; }
+  items = data || [];
+  items = items.map(i => ({ ...i, soggetto: i.soggetto || '', completed: i.completed || false }));
+  updateSelects();
+  currentPage = 1;
+  render();
+  updateLastSync();
+}
+
 function updateSelects() {
-  const tipi = [...new Set(items.map(i=>i.tipo).filter(Boolean))].sort();
-  const certs = [...new Set(items.map(i=>i.cert).filter(Boolean))].sort();
+  const activeItems = items.filter(i => !i.completed);
+  const tipi = [...new Set(activeItems.map(i=>i.tipo).filter(Boolean))].sort();
+  const certs = [...new Set(activeItems.map(i=>i.cert).filter(Boolean))].sort();
   const fT = document.getElementById('f-tipo'), fC = document.getElementById('f-cert');
   const curT = fT.value, curC = fC.value;
   fT.innerHTML = '<option value="">Tutti</option>' + tipi.map(t=>`<option>${esc(t)}</option>`).join('');
@@ -737,6 +979,7 @@ function updateSelects() {
 }
 
 function openModal(id=null) {
+  if (isViewOnly || !isAdmin) return;
   editingId = id;
   document.getElementById('modal-title').textContent = id ? 'Modifica scadenza' : 'Nuova scadenza';
   ['name','soggetto','tipo','cert','date','resp','note'].forEach(f => {
@@ -750,6 +993,7 @@ function closeModal() { document.getElementById('modal').classList.remove('open'
 function backdropClose(e) { if (e.target===e.currentTarget) closeModal(); }
 
 async function saveItem() {
+  if (isViewOnly || !isAdmin) return;
   const name = document.getElementById('m-name').value.trim();
   const soggetto = document.getElementById('m-soggetto').value.trim();
   const tipo = document.getElementById('m-tipo').value.trim();
@@ -760,7 +1004,9 @@ async function saveItem() {
   const payload = { name, tipo, cert, date,
     soggetto: soggetto,
     resp: document.getElementById('m-resp').value.trim(),
-    note: document.getElementById('m-note').value.trim() };
+    note: document.getElementById('m-note').value.trim(),
+    completed: false   // nuovo record parte come non completato
+  };
 
   const { error } = editingId
     ? await db.from('scadenze').update(payload).eq('id', editingId)
@@ -773,8 +1019,9 @@ async function saveItem() {
 }
 
 async function deleteItem(id) {
+  if (isViewOnly || !isAdmin) return;
   const item = items.find(i => i.id === id);
-  const confirmMsg = `Eliminare "${item.name}" - ${item.cert}?`;
+  const confirmMsg = `Eliminare definitivamente "${item.name}" - ${item.cert}?`;
   if (confirm(confirmMsg)) {
     const { error } = await db.from('scadenze').delete().eq('id', id);
     if (error) { showToast('Errore eliminazione'); return; }
@@ -791,6 +1038,14 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
+function updateLastSync() {
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  const syncElement = document.getElementById('last-sync');
+  if (syncElement) syncElement.textContent = `Ultimo aggiornamento: ${timeStr}`;
+}
+
+// ==================== TEMA ====================
 function applyTheme(theme) {
   if (theme === 'dark') {
     document.documentElement.setAttribute('data-theme', 'dark');
@@ -810,198 +1065,30 @@ function toggleTheme() {
   applyTheme(newTheme);
 }
 
-// ==================== NUOVE FUNZIONI PER ORDINAMENTO E PAGINAZIONE ====================
-
-function sortBy(field) {
-  if (sortField === field) {
-    // Inverti direzione
-    sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-  } else {
-    sortField = field;
-    sortDirection = 'asc';
-  }
-  currentPage = 1;  // torna alla prima pagina
-  render();
-  updateSortIcons();
-}
-
-function updateSortIcons() {
-  const fields = ['name', 'soggetto', 'cert', 'tipo', 'date'];
-  fields.forEach(f => {
-    const iconSpan = document.getElementById(`sort-${f}`);
-    if (iconSpan) {
-      if (sortField === f) {
-        iconSpan.textContent = sortDirection === 'asc' ? '↑' : '↓';
-      } else {
-        iconSpan.textContent = '↕️';
-      }
-    }
-  });
-}
-
-function getFilteredItems() {
-  const search = (document.getElementById('f-search').value || '').toLowerCase();
-  const fT = document.getElementById('f-tipo').value;
-  const fC = document.getElementById('f-cert').value;
-  const fS = document.getElementById('f-stato').value;
-
-  let filtered = items.filter(i => {
-    const st = getStatus(i.date);
-    if (search && ![i.name, i.cert, i.tipo, i.resp, i.soggetto].join(' ').toLowerCase().includes(search)) return false;
-    if (fT && i.tipo !== fT) return false;
-    if (fC && i.cert !== fC) return false;
-    if (fS && st !== fS) return false;
-    return true;
-  });
-
-  // Applica quickFilter (today/week)
-  const oggi = new Date(); oggi.setHours(0,0,0,0);
-  if (currentQuickFilter === 'today') {
-    const oggiStr = oggi.toISOString().split('T')[0];
-    filtered = filtered.filter(i => i.date === oggiStr);
-  } else if (currentQuickFilter === 'week') {
-    const tra7 = new Date(oggi); tra7.setDate(oggi.getDate() + 7);
-    filtered = filtered.filter(i => {
-      const itemDate = new Date(i.date);
-      return itemDate >= oggi && itemDate <= tra7;
-    });
-  }
-
-  return filtered;
-}
-
-// Ordinamento generico per campo
-function compareItems(a, b) {
-  let valA, valB;
-  switch (sortField) {
-    case 'name': valA = a.name || ''; valB = b.name || ''; break;
-    case 'soggetto': valA = a.soggetto || ''; valB = b.soggetto || ''; break;
-    case 'cert': valA = a.cert || ''; valB = b.cert || ''; break;
-    case 'tipo': valA = a.tipo || ''; valB = b.tipo || ''; break;
-    case 'date': valA = new Date(a.date); valB = new Date(b.date); break;
-    default: valA = a.name || ''; valB = b.name || '';
-  }
-  if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
-  if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
-  return 0;
-}
-
-function render() {
-  // Aggiorna i contatori della sidebar
-  document.getElementById('s-tot').textContent = items.length;
-  document.getElementById('s-exp').textContent = items.filter(i=>getStatus(i.date)==='scaduta').length;
-  document.getElementById('s-urg').textContent = items.filter(i=>getStatus(i.date)==='urgente').length;
-  document.getElementById('s-ins').textContent = items.filter(i=>getStatus(i.date)==='in-scadenza').length;
-  document.getElementById('s-ok').textContent = items.filter(i=>getStatus(i.date)==='ok').length;
-
-  let filtered = getFilteredItems();
-  const totalFiltered = filtered.length;
-  const totalPages = Math.ceil(totalFiltered / itemsPerPage);
-
-  // Assicura che currentPage sia valido
-  if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
-  if (currentPage < 1) currentPage = 1;
-
-  // Ordina
-  filtered.sort(compareItems);
-
-  // Paginazione
-  const start = (currentPage - 1) * itemsPerPage;
-  const paginated = filtered.slice(start, start + itemsPerPage);
-
-  // Render tabella
-  const body = document.getElementById('table-body');
-  if (!paginated.length) {
-    body.innerHTML = `<div class="empty"><div class="empty-title">${totalFiltered ? 'Nessun risultato' : 'Nessuna scadenza'}</div>${totalFiltered ? 'Prova a modificare i filtri.' : 'Aggiungi la prima scadenza con il pulsante in alto.'}</div>`;
-  } else {
-    body.innerHTML = paginated.map((i, idx) => {
-      const st = getStatus(i.date);
-      return `<div class="table-row st-${st}" style="animation-delay:${idx*15}ms" data-id="${i.id}" ondblclick="editItem('${i.id}')">
-        <div>
-          <div class="row-name">${esc(i.name)}</div>
-          ${i.resp ? `<div class="row-sub">${esc(i.resp)}</div>` : ''}
-        </div>
-        <div class="row-muted">${esc(i.soggetto || '—')}</div>
-        <div class="row-muted">${esc(i.cert)}</div>
-        <div class="row-muted">${esc(i.tipo)}</div>
-        <div>
-          <div class="row-date">${formatDate(i.date)}</div>
-          <div class="row-date-sub">${daysLabel(i.date)}</div>
-        </div>
-        <div><span class="badge ${st}">${statusLabel(st)}</span></div>
-        ${isAdmin ? `
-        <div class="row-actions">
-          <button class="icon-btn" onclick="editItem('${i.id}')" title="Modifica scadenza">
-            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-          </button>
-          <button class="icon-btn del" onclick="deleteItem('${i.id}')" title="Elimina scadenza">
-            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-          </button>
-        </div>
-        ` : ''}
-      </div>`;
-    }).join('');
-  }
-
-  // Gestione controlli paginazione
-  const paginationDiv = document.getElementById('pagination-controls');
-  const prevBtn = document.getElementById('prev-page');
-  const nextBtn = document.getElementById('next-page');
-  const pageInfo = document.getElementById('page-info');
-
-  if (totalFiltered <= itemsPerPage) {
-    paginationDiv.style.display = 'none';
-  } else {
-    paginationDiv.style.display = 'flex';
-    pageInfo.textContent = `Pagina ${currentPage} di ${totalPages}`;
-    prevBtn.disabled = currentPage === 1;
-    nextBtn.disabled = currentPage === totalPages;
-    // Scollega eventi vecchi e ricollega
-    const newPrev = prevBtn.cloneNode(true);
-    const newNext = nextBtn.cloneNode(true);
-    prevBtn.parentNode.replaceChild(newPrev, prevBtn);
-    nextBtn.parentNode.replaceChild(newNext, nextBtn);
-    newPrev.onclick = () => { if (currentPage > 1) { currentPage--; render(); } };
-    newNext.onclick = () => { if (currentPage < totalPages) { currentPage++; render(); } };
-  }
-
-  updateSortIcons();
-  updateLastSync(); // aggiorna timestamp ogni render
-}
-
-function quickFilter(type) {
-  currentQuickFilter = type;
-  // Resetta i filtri UI (search, stato, tipo, cert) per coerenza
-  document.getElementById('f-search').value = '';
-  document.getElementById('f-stato').value = '';
-  document.getElementById('f-tipo').value = '';
-  document.getElementById('f-cert').value = '';
-  currentPage = 1;
-  render();
-  const count = getFilteredItems().length;
-  if (type === 'today') showToast(`📅 Mostrando scadenze di oggi (${count})`);
-  else if (type === 'week') showToast(`📆 Mostrando scadenze dei prossimi 7 giorni (${count})`);
-  else showToast(`🗑️ Mostrando tutte le scadenze (${count})`);
-}
-
+// ==================== INIT ====================
 async function init() {
+  const viewOnlyParam = getUrlParam('viewonly');
+  isViewOnly = (viewOnlyParam === '1');
   db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   await loadItems();
+  if (!isViewOnly) {
+    // solo se non viewonly l'admin può essere attivato, altrimenti disabilitiamo
+    const savedAdmin = localStorage.getItem('isAdmin');
+    isAdmin = savedAdmin === 'true';
+  } else {
+    isAdmin = false;
+  }
   updateAdminUI();
   const savedTheme = localStorage.getItem('theme') || 'light';
   applyTheme(savedTheme);
   updateSortIcons();
-}
 
-async function loadItems() {
-  const { data, error } = await db.from('scadenze').select('*').order('date', { ascending: true });
-  if (error) { showToast('Errore caricamento'); return; }
-  items = data || [];
-  items = items.map(i => ({ ...i, soggetto: i.soggetto || '' }));
-  updateSelects();
-  currentPage = 1;
-  render();
-  updateLastSync();
+  // se viewonly, nascondi anche l'admin lock (opzionale) e disabilita eventuali interazioni
+  if (isViewOnly) {
+    const adminBtn = document.getElementById('adminLockBtn');
+    if (adminBtn) adminBtn.style.display = 'none';
+    // disabilita doppio click tramite CSS? già gestito nell'ondblclick
+  }
 }
 
 document.addEventListener('keydown', e => { if (e.key==='Escape') closeModal(); });
