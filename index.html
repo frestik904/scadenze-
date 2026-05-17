@@ -677,14 +677,8 @@ function validateInput(name, tipo, cert, date) {
   return null;
 }
 
-const ADMIN_HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
+const ADMIN_PASSWORD = 'scadenze2024';
 let isAdmin = localStorage.getItem('isAdmin') === 'true';
-
-async function sha256(text) {
-  const buf = new TextEncoder().encode(text);
-  const hash = await crypto.subtle.digest('SHA-256', buf);
-  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
 
 async function toggleAdmin() {
   if (isAdmin) {
@@ -696,8 +690,7 @@ async function toggleAdmin() {
   }
   const pw = prompt('Inserisci la password amministratore:');
   if (!pw) return;
-  const hash = await sha256(pw);
-  if (hash === ADMIN_HASH) {
+  if (pw === ADMIN_PASSWORD) {
     isAdmin = true;
     localStorage.setItem('isAdmin', 'true');
     showToast('Accesso admin abilitato ✓');
