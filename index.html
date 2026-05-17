@@ -307,6 +307,10 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
   background: var(--paper); border-bottom: 1px solid var(--paper-3);
   font-size: 10px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .8px;
 }
+.th-sortable { cursor: pointer; user-select: none; display: inline-flex; align-items: center; gap: 4px; transition: color .15s; }
+.th-sortable:hover { color: var(--ink); }
+.th-arrow { font-size: 9px; opacity: .3; transition: opacity .15s; }
+.th-sortable:hover .th-arrow, .th-sortable.active .th-arrow { opacity: 1; }
 .table-row {
   display: grid; grid-template-columns: 1.8fr 1.2fr 1.5fr 1.1fr 1.2fr 1fr 80px;
   gap: 8px; padding: 1rem 1.5rem;
@@ -485,6 +489,8 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
   }
   .skeleton { grid-template-columns: 2fr 1fr 1.2fr 1fr 80px; }
   .skeleton > *:nth-child(4), .skeleton > *:nth-child(5) { display: none; }
+  .table-head span:nth-child(4), .table-row > *:nth-child(4),
+  .table-head span:nth-child(5), .table-row > *:nth-child(5) { display: none; }
 }
 </style>
 </head>
@@ -583,22 +589,25 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
       </div>
       <div class="filter-group">
         <label>Ordina per</label>
-        <select id="f-sort" onchange="render()">
+        <select id="f-sort" onchange="currentSort=this.value;updateSortArrows(this.value);render()">
           <option value="date-asc">Data (prossima)</option>
           <option value="date-desc">Data (lontana)</option>
           <option value="az">Azienda A-Z</option>
+          <option value="za">Azienda Z-A</option>
           <option value="cert">Certificazione</option>
+          <option value="tipo">Tipo azienda</option>
+          <option value="soggetto">Soggetto</option>
         </select>
       </div>
     </div>
 
     <div class="table-card">
       <div class="table-head">
-        <span>Azienda</span>
-        <span>Soggetto</span>
-        <span>Certificazione</span>
-        <span>Tipo</span>
-        <span>Scadenza</span>
+        <span class="th-sortable" onclick="sortBy('az')" title="Ordina per azienda">Azienda <span class="th-arrow" id="arrow-az"></span></span>
+        <span class="th-sortable" onclick="sortBy('soggetto')" title="Ordina per soggetto">Soggetto <span class="th-arrow" id="arrow-sogg"></span></span>
+        <span class="th-sortable" onclick="sortBy('cert')" title="Ordina per certificazione">Certificazione <span class="th-arrow" id="arrow-cert"></span></span>
+        <span class="th-sortable" onclick="sortBy('tipo')" title="Ordina per tipo">Tipo <span class="th-arrow" id="arrow-tipo"></span></span>
+        <span class="th-sortable" onclick="sortBy('date-asc')" title="Ordina per scadenza">Scadenza <span class="th-arrow" id="arrow-date"></span></span>
         <span>Stato</span>
         <span></span>
       </div>
@@ -661,6 +670,30 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 let db, items = [], editingId = null;
 const today = new Date(); today.setHours(0,0,0,0);
+let currentSort = 'date-asc';
+
+function sortBy(key) {
+  if (currentSort === key) {
+    key = key === 'date-asc' ? 'date-desc' : key === 'az' ? 'za' : key;
+  }
+  currentSort = key;
+  document.getElementById('f-sort').value = key;
+  updateSortArrows(key);
+  render();
+}
+
+function updateSortArrows(key) {
+  document.querySelectorAll('.th-sortable').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.th-arrow').forEach(el => el.textContent = '');
+  const map = { 'az': 'arrow-az', 'za': 'arrow-az', 'date-asc': 'arrow-date', 'date-desc': 'arrow-date', 'cert': 'arrow-cert', 'tipo': 'arrow-tipo', 'soggetto': 'arrow-sogg' };
+  const arrowId = map[key];
+  if (arrowId) {
+    const arrow = document.getElementById(arrowId);
+    const parent = arrow?.closest('.th-sortable');
+    if (parent) parent.classList.add('active');
+    if (arrow) arrow.textContent = ['date-desc','za'].includes(key) ? '▼' : '▲';
+  }
+}
 
 function debounce(fn, ms) {
   let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
@@ -726,6 +759,7 @@ async function init() {
     applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   }
   document.getElementById('f-search').addEventListener('input', debounce(render, 250));
+  updateSortArrows(currentSort);
 }
 
 async function loadItems() {
@@ -820,7 +854,7 @@ function render() {
   const fT = document.getElementById('f-tipo').value;
   const fC = document.getElementById('f-cert').value;
   const fS = document.getElementById('f-stato').value;
-  const sort = document.getElementById('f-sort').value;
+  const sort = currentSort;
 
   let filtered = items.filter(i => {
     const st = getStatus(i.date);
@@ -835,7 +869,10 @@ function render() {
     if (sort==='date-asc') return new Date(a.date)-new Date(b.date);
     if (sort==='date-desc') return new Date(b.date)-new Date(a.date);
     if (sort==='az') return (a.name||'').localeCompare(b.name||'');
+    if (sort==='za') return (b.name||'').localeCompare(a.name||'');
     if (sort==='cert') return (a.cert||'').localeCompare(b.cert||'');
+    if (sort==='tipo') return (a.tipo||'').localeCompare(b.tipo||'');
+    if (sort==='soggetto') return (a.soggetto||'').localeCompare(b.soggetto||'');
     return 0;
   });
 
@@ -857,7 +894,6 @@ function render() {
   body.innerHTML = filtered.map((i, idx) => {
     const st = getStatus(i.date);
     const diff = Math.floor((new Date(i.date) - today) / 86400000);
-    const badgeText = st === 'ok' ? daysLabel(i.date) : statusLabel(st);
     const pct = Math.max(0, Math.min(100, ((90 - diff) / 90) * 100));
     return `<div class="table-row st-${st}" style="animation-delay:${idx*30}ms">
       <div>
@@ -869,9 +905,8 @@ function render() {
       <div class="row-muted">${esc(i.tipo)}</div>
       <div>
         <div class="row-date">${formatDate(i.date)}</div>
-        <div class="row-date-sub">${daysLabel(i.date)}</div>
       </div>
-      <div><span class="badge ${st}">${badgeText}</span></div>
+      <div><span class="badge ${st}">${daysLabel(i.date)}</span></div>
       ${isAdmin ? `
       <div class="row-actions">
         <button class="icon-btn" onclick="editItem('${i.id}')" title="Modifica">
