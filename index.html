@@ -274,6 +274,8 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 }
 .btn-export:hover { background: var(--paper); color: var(--ink); border-color: var(--ink-3); }
 .btn-export svg { width: 16px; height: 16px; }
+.btn-admin-toggle { display: none; }
+.btn-admin-toggle.active-admin-visible { display: inline-flex !important; }
 
 .filters-bar {
   display: grid; grid-template-columns: 1.5fr repeat(4, 1fr);
@@ -546,13 +548,17 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
       <div>
         <h1 class="page-title">Le tue <em>scadenze</em></h1>
       </div>
-      <button class="btn-add" onclick="openModal()">
+      <button class="btn-add btn-admin-toggle" onclick="openModal()">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
         Aggiungi scadenza
       </button>
-      <button class="btn-export" onclick="exportCSV()" title="Esporta in CSV">
+      <button class="btn-export btn-admin-toggle" onclick="exportCSV()" title="Esporta in CSV">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Esporta CSV
+      </button>
+      <button class="btn-export btn-admin-toggle" onclick="importCSV()" title="Importa da CSV">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3h18v14H3z"/><path d="M12 3v6"/><path d="M7 14l5-5 5 5"/></svg>
+        Importa CSV
       </button>
       <button class="theme-toggle-mobile" onclick="toggleTheme()" id="themeToggleMobile" title="Cambia tema">
         <span class="mobile-theme-icon">🌙</span>
@@ -741,8 +747,9 @@ function updateAdminUI() {
     btn.classList.remove('active');
     btn.innerHTML = '<span>🔒</span> Admin';
   }
-  const addBtn = document.querySelector('.btn-add');
-  if (addBtn) addBtn.style.display = isAdmin ? 'inline-flex' : 'none';
+  document.querySelectorAll('.btn-admin-toggle').forEach(el => {
+    el.classList.toggle('active-admin-visible', isAdmin);
+  });
 }
 
 async function init() {
@@ -978,6 +985,7 @@ async function deleteItem(id) {
 function editItem(id) { openModal(id); }
 
 function exportCSV() {
+  if (!isAdmin) { showToast('Export disponibile solo per admin'); return; }
   if (!items.length) { showToast('Nessun dato da esportare'); return; }
   const headers = ['Azienda', 'Soggetto', 'Tipo', 'Certificazione', 'Data Scadenza', 'Responsabile', 'Note', 'Stato'];
   const rows = items.map(i => [
@@ -991,6 +999,39 @@ function exportCSV() {
   a.href = url; a.download = 'scadenze_' + new Date().toISOString().slice(0, 10) + '.csv';
   a.click(); URL.revokeObjectURL(url);
   showToast('CSV scaricato ✓');
+}
+
+function importCSV() {
+  if (!isAdmin) { showToast('Import disponibile solo per admin'); return; }
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.csv';
+  input.style.display = 'none';
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const text = await file.text();
+    const lines = text.split(/\r?\n/).filter(l => l.trim());
+    if (lines.length < 2) { showToast('CSV vuoto o non valido'); return; }
+    const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, '').toLowerCase());
+    const mapping = { azienda:'name', soggetto:'soggetto', tipo:'tipo', certificazione:'cert', 'data scadenza':'date', responsabile:'resp', note:'note' };
+    let imported = 0, skipped = 0;
+    for (let i = 1; i < lines.length; i++) {
+      const cols = lines[i].split(',').map(c => c.trim().replace(/^"|"$/g, ''));
+      const row = {};
+      Object.keys(mapping).forEach(key => {
+        const idx = headers.indexOf(key);
+        row[mapping[key]] = idx >= 0 ? (cols[idx] || '') : '';
+      });
+      if (!row.name || !row.cert || !row.date) { skipped++; continue; }
+      const { error } = await db.from('scadenze').insert([row]);
+      if (!error) imported++;
+      else skipped++;
+    }
+    showToast(`Import: ${imported} nuovi, ${skipped} saltati`);
+    await loadItems();
+  };
+  input.click();
 }
 
 function showToast(msg) {
