@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Scadenze</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -152,10 +152,10 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 .sidebar-stat-val.amber { color: #FFD740; }
 .sidebar-stat-val.blue { color: #82B1FF; }
 .sidebar-stat-val.green { color: #69F0AE; }
-.sidebar-stat-val.completed { color: #AAA; }
 .sidebar-divider { border: none; border-top: 1px solid var(--sidebar-divider); margin: 1.5rem 0; }
 .sidebar-footer { margin-top: auto; font-size: 11px; color: var(--sidebar-label); }
 
+/* Toggle tema sidebar */
 .theme-toggle {
   display: flex;
   align-items: center;
@@ -191,6 +191,7 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 .theme-toggle.active .theme-thumb::after { transform: translateX(16px); }
 .theme-label { font-size: 13px; color: var(--sidebar-stat-label); font-weight: 300; }
 
+/* Toggle mobile */
 .theme-toggle-mobile {
   display: none;
   background: var(--btn-bg);
@@ -206,6 +207,7 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 .theme-toggle-mobile:hover { background: var(--btn-hover-bg); }
 .mobile-theme-icon { pointer-events: none; }
 
+/* Admin lock */
 .admin-lock {
   background: none;
   border: 1px solid var(--sidebar-divider);
@@ -225,7 +227,7 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 
 .main { padding: 2.5rem 2.5rem; overflow-x: hidden; }
 
-.page-header { margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; }
+.page-header { margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-start; }
 .page-title { font-family: 'Instrument Serif', serif; font-size: 36px; color: var(--ink); letter-spacing: -.5px; line-height: 1.1; }
 .page-title em { font-style: italic; color: var(--accent); }
 .btn-add {
@@ -239,14 +241,22 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 .btn-add:hover { background: var(--btn-hover-bg); transform: translateY(-1px); box-shadow: var(--shadow-lg); }
 .btn-add:active { transform: translateY(0); }
 .btn-add svg { width: 16px; height: 16px; }
+.btn-export {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent; color: var(--ink-2);
+  padding: 10px 18px; border-radius: var(--radius);
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+  border: 1px solid var(--paper-3); cursor: pointer; transition: all .15s;
+}
+.btn-export:hover { background: var(--paper); color: var(--ink); border-color: var(--ink-3); }
+.btn-export svg { width: 16px; height: 16px; }
 
 .filters-bar {
-  display: grid; grid-template-columns: 1.5fr repeat(3, 1fr) auto;
+  display: grid; grid-template-columns: 1.5fr repeat(4, 1fr);
   gap: 10px; margin-bottom: 1.5rem;
   background: var(--surface); border-radius: var(--radius-lg);
   padding: 1rem 1.25rem; box-shadow: var(--shadow);
   border: 1px solid var(--paper-3);
-  align-items: end;
 }
 .filter-group label { display: block; font-size: 10px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 5px; }
 .filter-group input,
@@ -261,85 +271,23 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 .search-wrap { position: relative; }
 .search-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--ink-3); pointer-events: none; }
 .search-wrap input { padding-left: 32px; }
-.filter-checkbox {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--paper);
-  padding: 6px 12px;
-  border-radius: 20px;
-  border: 1px solid var(--paper-3);
-  font-size: 12px;
-  cursor: pointer;
-  white-space: nowrap;
-}
-.filter-checkbox input {
-  width: 16px;
-  height: 16px;
-  margin: 0;
-  cursor: pointer;
-}
-
-.quick-filters {
-  grid-column: span 5;
-  display: flex;
-  gap: 8px;
-  margin-top: 5px;
-  padding-top: 5px;
-  border-top: 1px solid var(--paper-2);
-}
-.quick-filter {
-  background: var(--paper);
-  border: 1px solid var(--paper-3);
-  border-radius: 20px;
-  padding: 5px 12px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all .15s;
-  font-family: 'DM Sans', sans-serif;
-  color: var(--ink-2);
-}
-.quick-filter:hover {
-  background: var(--accent-light);
-  border-color: var(--accent);
-}
 
 .table-card {
   background: var(--surface); border-radius: var(--radius-lg);
   box-shadow: var(--shadow); border: 1px solid var(--paper-3);
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-.table-head, .table-row {
-  display: grid;
-  grid-template-columns: 1.8fr 1.2fr 1.5fr 1.1fr 1.2fr 1fr 100px;
-  gap: 8px;
-  align-items: center;
-  min-width: 750px;
+  overflow: hidden;
 }
 .table-head {
-  padding: .75rem 1.5rem;
-  background: var(--paper);
-  border-bottom: 1px solid var(--paper-3);
-  font-size: 10px;
-  color: var(--ink-3);
-  text-transform: uppercase;
-  letter-spacing: .8px;
+  display: grid; grid-template-columns: 1.8fr 1.2fr 1.5fr 1.1fr 1.2fr 1fr 80px;
+  gap: 8px; padding: .75rem 1.5rem;
+  background: var(--paper); border-bottom: 1px solid var(--paper-3);
+  font-size: 10px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .8px;
 }
-.sortable-header {
-  cursor: pointer;
-  user-select: none;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-.sortable-header:hover { color: var(--accent); }
-.sort-icon { font-size: 8px; opacity: 0.6; }
-
 .table-row {
-  padding: 1rem 1.5rem;
+  display: grid; grid-template-columns: 1.8fr 1.2fr 1.5fr 1.1fr 1.2fr 1fr 80px;
+  gap: 8px; padding: 1rem 1.5rem;
   border-bottom: 1px solid var(--paper-2);
-  transition: background .12s;
+  align-items: center; transition: background .12s;
   animation: fadeRow .3s ease both;
   position: relative;
 }
@@ -353,7 +301,6 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 .table-row.st-urgente::before { background: #E6A817; }
 .table-row.st-in-scadenza::before { background: var(--blue); }
 .table-row.st-ok::before { background: var(--green); }
-.table-row.completed-row { opacity: 0.7; background: var(--paper-2); }
 .table-row:last-child { border-bottom: none; }
 .table-row:hover { background: var(--paper); }
 .row-name { font-weight: 500; font-size: 14px; }
@@ -369,17 +316,20 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 }
 .icon-btn:hover { border-color: var(--ink-3); color: var(--ink); background: var(--paper); }
 .icon-btn.del:hover { border-color: var(--red); color: var(--red); background: var(--red-light); }
-.icon-btn.complete:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
 
 .badge {
-  display: inline-flex; align-items: center; gap: 6px;
+  display: inline-flex; align-items: center; gap: 5px;
   padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 500;
 }
+.badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
 .badge.scaduta { background: var(--red-light); color: var(--red); }
+.badge.scaduta::before { background: var(--red); }
 .badge.urgente { background: var(--amber-light); color: var(--amber); }
+.badge.urgente::before { background: #E6A817; }
 .badge.in-scadenza { background: var(--blue-light); color: var(--blue); }
+.badge.in-scadenza::before { background: var(--blue); }
 .badge.ok { background: var(--green-light); color: var(--green); }
-.badge.completed { background: var(--paper-3); color: var(--ink-3); }
+.badge.ok::before { background: var(--green); }
 
 .empty {
   text-align: center; padding: 5rem 1rem;
@@ -387,39 +337,6 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 }
 .empty-title { font-family: 'Instrument Serif', serif; font-size: 22px; color: var(--ink-2); margin-bottom: 6px; }
 .loading { text-align: center; padding: 3rem; color: var(--ink-3); font-size: 13px; }
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 16px;
-  padding: 1rem;
-  background: var(--surface);
-  border-top: 1px solid var(--paper-2);
-}
-.pagination button {
-  background: var(--paper);
-  border: 1px solid var(--paper-3);
-  border-radius: 8px;
-  padding: 6px 12px;
-  cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 12px;
-  color: var(--ink-2);
-  transition: all .15s;
-}
-.pagination button:hover:not(:disabled) {
-  background: var(--accent-light);
-  border-color: var(--accent);
-}
-.pagination button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-.page-info {
-  font-size: 12px;
-  color: var(--ink-2);
-}
 
 .modal-backdrop {
   display: none; position: fixed; inset: 0;
@@ -480,97 +397,24 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 @keyframes fadeRow { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 @keyframes modalIn { from { opacity: 0; transform: scale(.96) translateY(8px); } to { opacity: 1; transform: none; } }
 
-/* ========== RESPONSIVE MOBILE ========== */
 @media (max-width: 900px) {
   .layout { grid-template-columns: 1fr; }
   .sidebar { display: none; }
-  .main { padding: 1rem; }
-
-  .filters-bar {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-  .quick-filters {
-    grid-column: span 1;
-    flex-wrap: wrap;
-    justify-content: stretch;
-  }
-  .quick-filter {
-    flex: 1;
-    text-align: center;
-    padding: 8px 6px;
-    font-size: 13px;
-  }
-  .filter-checkbox {
-    justify-content: center;
-    border: none;
-    background: none;
-    padding: 8px 0;
-  }
-
-  /* Allineamento perfetto su mobile */
-  .table-head, .table-row {
-    min-width: 750px;
-    grid-template-columns: 1.8fr 1.2fr 1.5fr 1.1fr 1.2fr 1fr 100px;
-    gap: 8px;
+  .main { padding: 1.5rem; }
+  .filters-bar { grid-template-columns: 1fr 1fr; }
+  .table-head, .table-row { grid-template-columns: 2fr 1fr 1.2fr 1fr 80px; }
+  .table-head span:nth-child(4), .table-row > *:nth-child(4),
+  .table-head span:nth-child(5), .table-row > *:nth-child(5) { display: none; }
+  .theme-toggle-mobile {
+    display: inline-flex;
     align-items: center;
-  }
-  .table-head {
-    padding: 0.75rem 1rem;
-  }
-  .table-row {
-    padding: 0.75rem 1rem;
-  }
-  .row-name { font-size: 13px; }
-  .badge { font-size: 10px; padding: 2px 8px; }
-
-  .row-actions {
-    gap: 12px;
-  }
-  .icon-btn {
-    width: 40px;
-    height: 40px;
-  }
-  .icon-btn svg {
-    width: 18px;
-    height: 18px;
-  }
-
-  .pagination button {
-    padding: 8px 16px;
-    font-size: 14px;
-  }
-  .page-info {
-    font-size: 13px;
-  }
-
-  .modal {
-    max-width: calc(100% - 2rem);
-    margin: 1rem;
-    padding: 1.5rem;
-  }
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-  .modal-footer {
-    flex-direction: row;
     justify-content: center;
   }
-  .btn-cancel, .btn-save {
-    flex: 1;
-    text-align: center;
+  .page-header {
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
   }
-}
-
-@media (max-width: 480px) {
-  .main { padding: 0.75rem; }
-  .page-title { font-size: 28px; }
-  .filter-group label { font-size: 9px; }
-  .filter-group input, .filter-group select { font-size: 12px; padding: 8px 8px; }
-  .search-wrap input { padding-left: 32px; }
-  .table-head, .table-row { min-width: 650px; } /* leggermente più compatta per schermi molto piccoli */
-  .icon-btn { width: 36px; height: 36px; }
-  .toast { font-size: 12px; white-space: normal; text-align: center; width: 90%; }
 }
 </style>
 </head>
@@ -583,7 +427,7 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
 
     <div class="sidebar-section">Panoramica</div>
     <div class="sidebar-stat" onclick="filterByStatus('')">
-      <span class="sidebar-stat-label">Totali (attive)</span>
+      <span class="sidebar-stat-label">Totali</span>
       <span class="sidebar-stat-val" id="s-tot">—</span>
     </div>
     <div class="sidebar-stat" onclick="filterByStatus('scaduta')">
@@ -602,10 +446,6 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
       <span class="sidebar-stat-label">In ordine</span>
       <span class="sidebar-stat-val green" id="s-ok">—</span>
     </div>
-    <div class="sidebar-stat" onclick="toggleShowCompleted()">
-      <span class="sidebar-stat-label">Completate</span>
-      <span class="sidebar-stat-val completed" id="s-completed">—</span>
-    </div>
 
     <hr class="sidebar-divider">
     <div class="sidebar-section">Aspetto</div>
@@ -621,7 +461,7 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
     </div>
 
     <hr class="sidebar-divider">
-    <div class="sidebar-footer" id="last-sync">Ultimo aggiornamento: —</div>
+    <div class="sidebar-footer">Dati sincronizzati in tempo reale</div>
   </aside>
 
   <main class="main">
@@ -629,9 +469,13 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
       <div>
         <h1 class="page-title">Le tue <em>scadenze</em></h1>
       </div>
-      <button class="btn-add" id="btn-add" onclick="openModal()" style="display: none;">
+      <button class="btn-add" onclick="openModal()">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
         Aggiungi scadenza
+      </button>
+      <button class="btn-export" onclick="exportCSV()" title="Esporta in CSV">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Esporta CSV
       </button>
       <button class="theme-toggle-mobile" onclick="toggleTheme()" id="themeToggleMobile" title="Cambia tema">
         <span class="mobile-theme-icon">🌙</span>
@@ -643,7 +487,7 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
         <label>Cerca</label>
         <div class="search-wrap">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <input type="search" id="f-search" placeholder="Azienda, certificazione, responsabile..." oninput="render()">
+          <input type="search" id="f-search" placeholder="Azienda, certificazione...">
         </div>
       </div>
       <div class="filter-group">
@@ -658,38 +502,34 @@ body, .sidebar, .main, .table-card, .table-row, .modal, .badge, .btn-add, .btn-c
         <label>Stato</label>
         <select id="f-stato" onchange="render()">
           <option value="">Tutti</option>
-          <option value="scaduta">❌ Scadute</option>
-          <option value="urgente">⚠️ Urgenti</option>
-          <option value="in-scadenza">⏰ In scadenza</option>
-          <option value="ok">🟢 Tranquille</option>
+          <option value="scaduta">Scadute</option>
+          <option value="urgente">Urgenti</option>
+          <option value="in-scadenza">In scadenza</option>
+          <option value="ok">In ordine</option>
         </select>
       </div>
-      <label class="filter-checkbox">
-        <input type="checkbox" id="show-completed" onchange="render()"> Mostra completate
-      </label>
-      <div class="quick-filters">
-        <button class="quick-filter" onclick="quickFilter('today')">📅 Oggi</button>
-        <button class="quick-filter" onclick="quickFilter('week')">📆 Questa settimana</button>
-        <button class="quick-filter" onclick="quickFilter('all')">🗑️ Tutti</button>
+      <div class="filter-group">
+        <label>Ordina per</label>
+        <select id="f-sort" onchange="render()">
+          <option value="date-asc">Data (prossima)</option>
+          <option value="date-desc">Data (lontana)</option>
+          <option value="az">Azienda A-Z</option>
+          <option value="cert">Certificazione</option>
+        </select>
       </div>
     </div>
 
     <div class="table-card">
       <div class="table-head">
-        <span class="sortable-header" onclick="sortBy('name')">Azienda <span class="sort-icon" id="sort-name">↕️</span></span>
-        <span class="sortable-header" onclick="sortBy('soggetto')">Soggetto <span class="sort-icon" id="sort-soggetto">↕️</span></span>
-        <span class="sortable-header" onclick="sortBy('cert')">Certificazione <span class="sort-icon" id="sort-cert">↕️</span></span>
-        <span class="sortable-header" onclick="sortBy('tipo')">Tipo <span class="sort-icon" id="sort-tipo">↕️</span></span>
-        <span class="sortable-header" onclick="sortBy('date')">Scadenza <span class="sort-icon" id="sort-date">↕️</span></span>
+        <span>Azienda</span>
+        <span>Soggetto</span>
+        <span>Certificazione</span>
+        <span>Tipo</span>
+        <span>Scadenza</span>
         <span>Stato</span>
         <span></span>
       </div>
-      <div id="table-body"><div class="loading">⏳ Caricamento scadenze...</div></div>
-      <div class="pagination" id="pagination-controls" style="display: none;">
-        <button id="prev-page" disabled>← Precedente</button>
-        <span class="page-info" id="page-info">Pagina 1 di 1</span>
-        <button id="next-page" disabled>Successiva →</button>
-      </div>
+      <div id="table-body"><div class="loading">Caricamento...</div></div>
     </div>
   </main>
 </div>
@@ -746,30 +586,33 @@ const SUPABASE_URL = 'https://tfkfppsbkuwidqyghbcf.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRma2ZwcHNia3V3aWRxeWdoYmNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMzUxNTQsImV4cCI6MjA5MzcxMTE1NH0.cE7SHF1_gLN4UKY9fKb84dXFjKe3F57RPNufTluRikA';
 
 let db, items = [], editingId = null;
-let currentQuickFilter = 'all';
-let today = new Date(); today.setHours(0,0,0,0);
-let sortField = 'date';
-let sortDirection = 'asc';
-let currentPage = 1;
-let itemsPerPage = 20;
-let isViewOnly = false;
+const today = new Date(); today.setHours(0,0,0,0);
 
-const ADMIN_PASSWORD = 'scadenze2024';
+function debounce(fn, ms) {
+  let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
+}
+
+function validateInput(name, tipo, cert, date) {
+  if (!name || name.length < 2) return 'Nome azienda troppo corto (min 2 caratteri)';
+  if (name.length > 120) return 'Nome azienda troppo lungo (max 120 caratteri)';
+  if (!tipo || tipo.length < 2) return 'Tipo azienda troppo corto (min 2 caratteri)';
+  if (tipo.length > 60) return 'Tipo azienda troppo lungo (max 60 caratteri)';
+  if (!cert || cert.length < 2) return 'Certificazione troppo corta (min 2 caratteri)';
+  if (cert.length > 80) return 'Certificazione troppo lunga (max 80 caratteri)';
+  if (!date) return 'Data scadenza obbligatoria';
+  return null;
+}
+
+const ADMIN_HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
 let isAdmin = localStorage.getItem('isAdmin') === 'true';
 
-function getUrlParam(param) {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get(param);
+async function sha256(text) {
+  const buf = new TextEncoder().encode(text);
+  const hash = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-function statusLabel(st) {
-  const icons = { scaduta: '❌', urgente: '⚠️', 'in-scadenza': '⏰', ok: '🟢' };
-  const texts = { scaduta: 'Scaduta', urgente: 'Urgente', 'in-scadenza': 'In scadenza', ok: 'Tranquilla' };
-  return `${icons[st]} ${texts[st]}`;
-}
-
-function toggleAdmin() {
-  if (isViewOnly) return;
+async function toggleAdmin() {
   if (isAdmin) {
     isAdmin = false;
     localStorage.removeItem('isAdmin');
@@ -778,63 +621,55 @@ function toggleAdmin() {
     return;
   }
   const pw = prompt('Inserisci la password amministratore:');
-  if (pw === ADMIN_PASSWORD) {
+  if (!pw) return;
+  const hash = await sha256(pw);
+  if (hash === ADMIN_HASH) {
     isAdmin = true;
     localStorage.setItem('isAdmin', 'true');
     showToast('Accesso admin abilitato ✓');
     updateAdminUI();
     render();
-  } else if (pw !== null) {
+  } else {
     showToast('Password errata');
   }
 }
 
 function updateAdminUI() {
   const btn = document.getElementById('adminLockBtn');
-  if (isAdmin && !isViewOnly) {
+  if (isAdmin) {
     btn.classList.add('active');
     btn.innerHTML = '<span>🔓</span> Admin';
   } else {
     btn.classList.remove('active');
     btn.innerHTML = '<span>🔒</span> Admin';
   }
-  const addBtn = document.getElementById('btn-add');
-  if (addBtn) addBtn.style.display = (isAdmin && !isViewOnly) ? 'inline-flex' : 'none';
+  const addBtn = document.querySelector('.btn-add');
+  if (addBtn) addBtn.style.display = isAdmin ? 'inline-flex' : 'none';
 }
 
-async function toggleCompleted(id) {
-  if (isViewOnly || !isAdmin) return;
-  const item = items.find(i => i.id === id);
-  if (!item) return;
-  const newCompleted = !item.completed;
-  const { error } = await db.from('scadenze').update({ completed: newCompleted }).eq('id', id);
-  if (error) { showToast('Errore aggiornamento'); return; }
-  showToast(newCompleted ? '✅ Scadenza segnata come completata' : '🔄 Scadenza ripristinata');
+async function init() {
+  db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   await loadItems();
+  updateAdminUI();
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  applyTheme(savedTheme);
+  document.getElementById('f-search').addEventListener('input', debounce(render, 250));
 }
 
-function updateStats() {
-  const activeItems = items.filter(i => !i.completed);
-  const total = activeItems.length;
-  const scadute = activeItems.filter(i => getStatus(i.date) === 'scaduta').length;
-  const urgenti = activeItems.filter(i => getStatus(i.date) === 'urgente').length;
-  const inScadenza = activeItems.filter(i => getStatus(i.date) === 'in-scadenza').length;
-  const ok = activeItems.filter(i => getStatus(i.date) === 'ok').length;
-  const completedCount = items.filter(i => i.completed).length;
-  document.getElementById('s-tot').textContent = total;
-  document.getElementById('s-exp').textContent = scadute;
-  document.getElementById('s-urg').textContent = urgenti;
-  document.getElementById('s-ins').textContent = inScadenza;
-  document.getElementById('s-ok').textContent = ok;
-  document.getElementById('s-completed').textContent = completedCount;
-}
-
-function toggleShowCompleted() {
-  const cb = document.getElementById('show-completed');
-  if (cb) {
-    cb.checked = !cb.checked;
-    render();
+async function loadItems() {
+  const { data, error } = await db.from('scadenze').select('*').order('date', { ascending: true });
+  if (error) {
+    console.error('Supabase load error:', error);
+    const msg = error.message?.includes('JWT') ? 'Sessione scaduta, ricarica la pagina'
+      : error.message?.includes('relation') ? 'Tabella non configurata'
+      : 'Errore di connessione: ' + error.message;
+    showToast(msg);
+    return;
   }
+  items = data || [];
+  items = items.map(i => ({ ...i, soggetto: i.soggetto || '' }));
+  updateSelects();
+  render();
 }
 
 function getStatus(d) {
@@ -843,6 +678,10 @@ function getStatus(d) {
   if (diff <= 30) return 'urgente';
   if (diff <= 90) return 'in-scadenza';
   return 'ok';
+}
+
+function statusLabel(s) {
+  return { scaduta:'Scaduta', urgente:'Urgente', 'in-scadenza':'In scadenza', ok:'In ordine' }[s];
 }
 
 function daysLabel(d) {
@@ -862,182 +701,14 @@ function esc(s) {
   return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function getFilteredItems() {
-  const search = (document.getElementById('f-search').value || '').toLowerCase();
-  const fT = document.getElementById('f-tipo').value;
-  const fC = document.getElementById('f-cert').value;
-  const fS = document.getElementById('f-stato').value;
-  const showCompletedOnly = document.getElementById('show-completed')?.checked || false;
-
-  let filtered = items.filter(i => {
-    if (showCompletedOnly && !i.completed) return false;
-    if (!showCompletedOnly && i.completed) return false;
-    const st = getStatus(i.date);
-    if (search && ![i.name, i.cert, i.tipo, i.resp, i.soggetto].join(' ').toLowerCase().includes(search)) return false;
-    if (fT && i.tipo !== fT) return false;
-    if (fC && i.cert !== fC) return false;
-    if (fS && st !== fS) return false;
-    return true;
-  });
-
-  const oggi = new Date(); oggi.setHours(0,0,0,0);
-  if (currentQuickFilter === 'today') {
-    const oggiStr = oggi.toISOString().slice(0,10);
-    filtered = filtered.filter(i => i.date === oggiStr);
-  } else if (currentQuickFilter === 'week') {
-    const oggiStr = oggi.toISOString().slice(0,10);
-    const tra7Date = new Date(); tra7Date.setDate(tra7Date.getDate() + 7);
-    const tra7Str = tra7Date.toISOString().slice(0,10);
-    filtered = filtered.filter(i => i.date >= oggiStr && i.date <= tra7Str);
-  }
-  return filtered;
-}
-
-function sortBy(field) {
-  if (sortField === field) {
-    sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-  } else {
-    sortField = field;
-    sortDirection = 'asc';
-  }
-  currentPage = 1;
+function filterByStatus(s) {
+  document.getElementById('f-stato').value = s;
   render();
-  updateSortIcons();
-}
-
-function compareItems(a, b) {
-  let valA, valB;
-  switch (sortField) {
-    case 'name': valA = a.name || ''; valB = b.name || ''; break;
-    case 'soggetto': valA = a.soggetto || ''; valB = b.soggetto || ''; break;
-    case 'cert': valA = a.cert || ''; valB = b.cert || ''; break;
-    case 'tipo': valA = a.tipo || ''; valB = b.tipo || ''; break;
-    case 'date': valA = new Date(a.date); valB = new Date(b.date); break;
-    default: valA = a.name || ''; valB = b.name || '';
-  }
-  if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
-  if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
-  return 0;
-}
-
-function updateSortIcons() {
-  const fields = ['name', 'soggetto', 'cert', 'tipo', 'date'];
-  fields.forEach(f => {
-    const iconSpan = document.getElementById(`sort-${f}`);
-    if (iconSpan) {
-      if (sortField === f) {
-        iconSpan.textContent = sortDirection === 'asc' ? '↑' : '↓';
-      } else {
-        iconSpan.textContent = '↕️';
-      }
-    }
-  });
-}
-
-function quickFilter(type) {
-  currentQuickFilter = type;
-  document.getElementById('f-search').value = '';
-  document.getElementById('f-stato').value = '';
-  document.getElementById('f-tipo').value = '';
-  document.getElementById('f-cert').value = '';
-  currentPage = 1;
-  render();
-  const count = getFilteredItems().length;
-  if (type === 'today') showToast(`📅 Mostrando scadenze di oggi (${count})`);
-  else if (type === 'week') showToast(`📆 Mostrando scadenze dei prossimi 7 giorni (${count})`);
-  else showToast(`🗑️ Mostrando tutte le scadenze (${count})`);
-}
-
-function filterByStatus(status) {
-  currentQuickFilter = 'all';
-  document.getElementById('f-stato').value = status;
-  render();
-}
-
-function render() {
-  updateStats();
-  let filtered = getFilteredItems();
-  const totalFiltered = filtered.length;
-  const totalPages = Math.ceil(totalFiltered / itemsPerPage);
-  if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
-  if (currentPage < 1) currentPage = 1;
-  filtered.sort(compareItems);
-  const start = (currentPage - 1) * itemsPerPage;
-  const paginated = filtered.slice(start, start + itemsPerPage);
-
-  const body = document.getElementById('table-body');
-  if (!paginated.length) {
-    body.innerHTML = `<div class="empty"><div class="empty-title">${totalFiltered ? 'Nessun risultato' : 'Nessuna scadenza attiva'}</div>${totalFiltered ? 'Prova a modificare i filtri.' : 'Aggiungi una nuova scadenza con il pulsante in alto.'}</div>`;
-  } else {
-    body.innerHTML = paginated.map((i, idx) => {
-      const st = i.completed ? 'completed' : getStatus(i.date);
-      const statusBadge = i.completed ? '✅ Completata' : statusLabel(st);
-      const rowClass = i.completed ? 'table-row completed-row' : `table-row st-${st}`;
-      return `<div class="${rowClass}" style="animation-delay:${idx*15}ms" data-id="${i.id}" ondblclick="${(!isViewOnly && isAdmin && !i.completed) ? `editItem('${i.id}')` : ''}">
-        <div>
-          <div class="row-name">${esc(i.name)}</div>
-          ${i.resp ? `<div class="row-sub">${esc(i.resp)}</div>` : ''}
-        </div>
-        <div class="row-muted">${esc(i.soggetto || '—')}</div>
-        <div class="row-muted">${esc(i.cert)}</div>
-        <div class="row-muted">${esc(i.tipo)}</div>
-        <div>
-          <div class="row-date">${formatDate(i.date)}</div>
-          <div class="row-date-sub">${daysLabel(i.date)}</div>
-        </div>
-        <div><span class="badge ${i.completed ? 'completed' : st}">${statusBadge}</span></div>
-        <div class="row-actions">
-          ${(!isViewOnly && isAdmin) ? `
-            ${!i.completed ? `<button class="icon-btn complete" onclick="toggleCompleted('${i.id}')" title="Segna come completata">✅</button>` : `<button class="icon-btn complete" onclick="toggleCompleted('${i.id}')" title="Ripristina (non completata)">🔄</button>`}
-            <button class="icon-btn" onclick="editItem('${i.id}')" title="Modifica scadenza">
-              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            </button>
-            <button class="icon-btn del" onclick="deleteItem('${i.id}')" title="Elimina scadenza">
-              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-            </button>
-          ` : ''}
-        </div>
-      </div>`;
-    }).join('');
-  }
-
-  const paginationDiv = document.getElementById('pagination-controls');
-  const prevBtn = document.getElementById('prev-page');
-  const nextBtn = document.getElementById('next-page');
-  const pageInfo = document.getElementById('page-info');
-  if (totalFiltered <= itemsPerPage) {
-    paginationDiv.style.display = 'none';
-  } else {
-    paginationDiv.style.display = 'flex';
-    pageInfo.textContent = `Pagina ${currentPage} di ${totalPages}`;
-    prevBtn.disabled = currentPage === 1;
-    nextBtn.disabled = currentPage === totalPages;
-    const newPrev = prevBtn.cloneNode(true);
-    const newNext = nextBtn.cloneNode(true);
-    prevBtn.parentNode.replaceChild(newPrev, prevBtn);
-    nextBtn.parentNode.replaceChild(newNext, nextBtn);
-    newPrev.onclick = () => { if (currentPage > 1) { currentPage--; render(); } };
-    newNext.onclick = () => { if (currentPage < totalPages) { currentPage++; render(); } };
-  }
-  updateSortIcons();
-  updateLastSync();
-}
-
-async function loadItems() {
-  const { data, error } = await db.from('scadenze').select('*').order('date', { ascending: true });
-  if (error) { showToast('Errore caricamento'); return; }
-  items = data || [];
-  items = items.map(i => ({ ...i, soggetto: i.soggetto || '', completed: i.completed || false }));
-  updateSelects();
-  currentPage = 1;
-  render();
-  updateLastSync();
 }
 
 function updateSelects() {
-  const activeItems = items.filter(i => !i.completed);
-  const tipi = [...new Set(activeItems.map(i=>i.tipo).filter(Boolean))].sort();
-  const certs = [...new Set(activeItems.map(i=>i.cert).filter(Boolean))].sort();
+  const tipi = [...new Set(items.map(i=>i.tipo).filter(Boolean))].sort();
+  const certs = [...new Set(items.map(i=>i.cert).filter(Boolean))].sort();
   const fT = document.getElementById('f-tipo'), fC = document.getElementById('f-cert');
   const curT = fT.value, curC = fC.value;
   fT.innerHTML = '<option value="">Tutti</option>' + tipi.map(t=>`<option>${esc(t)}</option>`).join('');
@@ -1047,8 +718,72 @@ function updateSelects() {
   document.getElementById('list-certs').innerHTML = certs.map(c=>`<option value="${esc(c)}">`).join('');
 }
 
+function render() {
+  const search = (document.getElementById('f-search').value||'').toLowerCase();
+  const fT = document.getElementById('f-tipo').value;
+  const fC = document.getElementById('f-cert').value;
+  const fS = document.getElementById('f-stato').value;
+  const sort = document.getElementById('f-sort').value;
+
+  let filtered = items.filter(i => {
+    const st = getStatus(i.date);
+    if (search && ![i.name,i.cert,i.tipo,i.resp,i.soggetto].join(' ').toLowerCase().includes(search)) return false;
+    if (fT && i.tipo !== fT) return false;
+    if (fC && i.cert !== fC) return false;
+    if (fS && st !== fS) return false;
+    return true;
+  });
+
+  filtered.sort((a,b) => {
+    if (sort==='date-asc') return new Date(a.date)-new Date(b.date);
+    if (sort==='date-desc') return new Date(b.date)-new Date(a.date);
+    if (sort==='az') return (a.name||'').localeCompare(b.name||'');
+    if (sort==='cert') return (a.cert||'').localeCompare(b.cert||'');
+    return 0;
+  });
+
+  document.getElementById('s-tot').textContent = items.length;
+  document.getElementById('s-exp').textContent = items.filter(i=>getStatus(i.date)==='scaduta').length;
+  document.getElementById('s-urg').textContent = items.filter(i=>getStatus(i.date)==='urgente').length;
+  document.getElementById('s-ins').textContent = items.filter(i=>getStatus(i.date)==='in-scadenza').length;
+  document.getElementById('s-ok').textContent = items.filter(i=>getStatus(i.date)==='ok').length;
+
+  const body = document.getElementById('table-body');
+  if (!filtered.length) {
+    body.innerHTML = `<div class="empty"><div class="empty-title">${items.length ? 'Nessun risultato' : 'Nessuna scadenza'}</div>${items.length ? 'Prova a modificare i filtri.' : 'Aggiungi la prima scadenza con il pulsante in alto.'}</div>`;
+    return;
+  }
+
+  body.innerHTML = filtered.map((i, idx) => {
+    const st = getStatus(i.date);
+    return `<div class="table-row st-${st}" style="animation-delay:${idx*30}ms">
+      <div>
+        <div class="row-name">${esc(i.name)}</div>
+        ${i.resp ? `<div class="row-sub">${esc(i.resp)}</div>` : ''}
+      </div>
+      <div class="row-muted">${esc(i.soggetto || '—')}</div>
+      <div class="row-muted">${esc(i.cert)}</div>
+      <div class="row-muted">${esc(i.tipo)}</div>
+      <div>
+        <div class="row-date">${formatDate(i.date)}</div>
+        <div class="row-date-sub">${daysLabel(i.date)}</div>
+      </div>
+      <div><span class="badge ${st}">${statusLabel(st)}</span></div>
+      ${isAdmin ? `
+      <div class="row-actions">
+        <button class="icon-btn" onclick="editItem('${i.id}')" title="Modifica">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button class="icon-btn del" onclick="deleteItem('${i.id}')" title="Elimina">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        </button>
+      </div>
+      ` : ''}
+    </div>`;
+  }).join('');
+}
+
 function openModal(id=null) {
-  if (isViewOnly || !isAdmin) return;
   editingId = id;
   document.getElementById('modal-title').textContent = id ? 'Modifica scadenza' : 'Nuova scadenza';
   ['name','soggetto','tipo','cert','date','resp','note'].forEach(f => {
@@ -1062,53 +797,71 @@ function closeModal() { document.getElementById('modal').classList.remove('open'
 function backdropClose(e) { if (e.target===e.currentTarget) closeModal(); }
 
 async function saveItem() {
-  if (isViewOnly || !isAdmin) return;
   const name = document.getElementById('m-name').value.trim();
   const soggetto = document.getElementById('m-soggetto').value.trim();
   const tipo = document.getElementById('m-tipo').value.trim();
   const cert = document.getElementById('m-cert').value.trim();
   const date = document.getElementById('m-date').value;
-  if (!name||!tipo||!cert||!date) { showToast('Compila tutti i campi obbligatori'); return; }
+
+  const err = validateInput(name, tipo, cert, date);
+  if (err) { showToast(err); return; }
+
   const payload = { name, tipo, cert, date,
     soggetto: soggetto,
     resp: document.getElementById('m-resp').value.trim(),
-    note: document.getElementById('m-note').value.trim(),
-    completed: false
-  };
+    note: document.getElementById('m-note').value.trim() };
+
   const { error } = editingId
     ? await db.from('scadenze').update(payload).eq('id', editingId)
     : await db.from('scadenze').insert(payload);
-  if (error) { showToast('Errore durante il salvataggio'); return; }
+
+  if (error) {
+    console.error('Supabase save error:', error);
+    const msg = error.message?.includes('JWT') ? 'Sessione scaduta, ricarica la pagina'
+      : error.message?.includes('duplicate') ? 'Questa scadenza esiste già'
+      : 'Errore salvataggio: ' + error.message;
+    showToast(msg);
+    return;
+  }
   showToast(editingId ? 'Scadenza aggiornata ✓' : 'Scadenza aggiunta ✓');
   closeModal();
   await loadItems();
 }
 
 async function deleteItem(id) {
-  if (isViewOnly || !isAdmin) return;
-  const item = items.find(i => i.id === id);
-  const confirmMsg = `Eliminare definitivamente "${item.name}" - ${item.cert}?`;
-  if (confirm(confirmMsg)) {
-    const { error } = await db.from('scadenze').delete().eq('id', id);
-    if (error) { showToast('Errore eliminazione'); return; }
-    showToast(`🗑️ ${item.name} eliminata`);
-    await loadItems();
+  if (!confirm('Eliminare questa scadenza?')) return;
+  const { error } = await db.from('scadenze').delete().eq('id', id);
+  if (error) {
+    console.error('Supabase delete error:', error);
+    showToast('Errore eliminazione: ' + error.message);
+    return;
   }
+  showToast('Eliminata');
+  await loadItems();
 }
 
 function editItem(id) { openModal(id); }
+
+function exportCSV() {
+  if (!items.length) { showToast('Nessun dato da esportare'); return; }
+  const headers = ['Azienda', 'Soggetto', 'Tipo', 'Certificazione', 'Data Scadenza', 'Responsabile', 'Note', 'Stato'];
+  const rows = items.map(i => [
+    i.name || '', i.soggetto || '', i.tipo || '', i.cert || '',
+    formatDate(i.date), i.resp || '', i.note || '', statusLabel(getStatus(i.date))
+  ]);
+  const csv = [headers, ...rows].map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
+  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'scadenze_' + new Date().toISOString().slice(0, 10) + '.csv';
+  a.click(); URL.revokeObjectURL(url);
+  showToast('CSV scaricato ✓');
+}
 
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
-}
-
-function updateLastSync() {
-  const now = new Date();
-  const timeStr = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-  const syncElement = document.getElementById('last-sync');
-  if (syncElement) syncElement.textContent = `Ultimo aggiornamento: ${timeStr}`;
 }
 
 function applyTheme(theme) {
@@ -1128,27 +881,6 @@ function toggleTheme() {
   const newTheme = current === 'dark' ? 'light' : 'dark';
   localStorage.setItem('theme', newTheme);
   applyTheme(newTheme);
-}
-
-async function init() {
-  const viewOnlyParam = getUrlParam('viewonly');
-  isViewOnly = (viewOnlyParam === '1');
-  db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  await loadItems();
-  if (!isViewOnly) {
-    const savedAdmin = localStorage.getItem('isAdmin');
-    isAdmin = savedAdmin === 'true';
-  } else {
-    isAdmin = false;
-  }
-  updateAdminUI();
-  const savedTheme = localStorage.getItem('theme') || 'light';
-  applyTheme(savedTheme);
-  updateSortIcons();
-  if (isViewOnly) {
-    const adminBtn = document.getElementById('adminLockBtn');
-    if (adminBtn) adminBtn.style.display = 'none';
-  }
 }
 
 document.addEventListener('keydown', e => { if (e.key==='Escape') closeModal(); });
